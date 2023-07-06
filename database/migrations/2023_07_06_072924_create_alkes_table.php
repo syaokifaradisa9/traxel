@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('alkes', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('excel_name');
+            $table->string('excel_name')->nullable();
             $table->timestamps();
         });
     }
