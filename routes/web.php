@@ -1,18 +1,26 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+Route::middleware('guest')->group(function(){
+    Route::get('/', function () {
+        return view('welcome');
+    })->name("login");
 
-Route::get('/', function () {
-    return view('welcome');
+    Route::post('verify', function(Request $request){
+        if(Auth::attempt($request->only('email', 'password'))){
+            return to_route('home');
+        }
+
+        return to_route('login')->with("error", "Email atau Password Salah!");
+    })->name('verify');
+});
+
+Route::middleware('auth')->group(function(){
+    Route::controller(HomeController::class)->group(function(){
+        Route::get('home', 'index')->name('home');
+    });
 });
