@@ -12,8 +12,11 @@ return new class extends Migration
         Schema::create('output_cell_values', function (Blueprint $table) {
             $table->id();
             $table->string('cell');
-            $table->string('value');
+            $table->string('expected_value');
+            $table->string('actual_value')->nullable();
             $table->foreignIdFor(TestSchema::class)->constrained();
+            $table->boolean('is_verified')->default(false);
+            $table->text('error_description')->nullable();
             $table->timestamps();
         });
     }

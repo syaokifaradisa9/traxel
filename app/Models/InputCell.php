@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class InputCell extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'cell',
+        'cell_name',
+        'excel_version_id'
+    ];
 }

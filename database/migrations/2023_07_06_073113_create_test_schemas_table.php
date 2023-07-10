@@ -13,6 +13,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignIdFor(ExcelVersion::class)->constrained();
+            $table->string('simulation_date')->nullable();
+            $table->string('simulation_time')->nullable();
             $table->timestamps();
         });
     }

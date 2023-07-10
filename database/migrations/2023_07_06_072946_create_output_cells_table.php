@@ -13,6 +13,7 @@ return new class extends Migration
         Schema::create('output_cells', function (Blueprint $table) {
             $table->id();
             $table->string('cell');
+            $table->string('cell_name');
             $table->foreignIdFor(ExcelVersion::class)->constrained();
             $table->timestamps();
         });

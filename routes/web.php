@@ -21,6 +21,18 @@ Route::middleware('guest')->group(function(){
 
 Route::middleware('auth')->group(function(){
     Route::controller(HomeController::class)->group(function(){
-        Route::get('home', 'index')->name('home');
+        Route::prefix('home')->group(function(){
+            Route::get('/', 'index')->name('home');
+            Route::prefix('{alkes_id}/version')->name('version.')->group(function(){
+                Route::get('/', 'excelVersion')->name('index');
+                Route::prefix("{version_id}/schema")->name('schema.')->group(function(){
+                    Route::get('/', 'trackingSchema')->name('index');
+                    Route::prefix("{schema_id}")->group(function(){
+                        Route::get('simulation', 'schemaSimulation')->name("simulation");
+                        Route::get('detail', 'detailSimulation')->name("detail-simulation");
+                    });
+                });
+            });
+        });
     });
 });

@@ -29,7 +29,7 @@
                                 {{ $value->name }}
                             </td>
                             <td>
-                                <a href="" class="btn btn-primary">
+                                <a href="{{ route('version.index', ['alkes_id' => $value->id]) }}" class="btn btn-primary">
                                     <i class="fas fa-search mr-1"></i>
                                     Detail
                                 </a>
