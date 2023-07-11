@@ -55,7 +55,7 @@
                               @if($value->simulation_date)
                                     {{ date("d-m-Y", strtotime($value->simulation_date)) . "   " . $value->simulation_time }} <br>
                                     <small>
-                                        <b class="{{ $value->simulation_days_ago > 30 ? "text-warning" : "text-success" }}">
+                                        <b>
                                             {{ "(" . $value->simulation_days_ago . " Hari yang lalu)" }}
                                         </b>
                                     </small>
@@ -65,7 +65,14 @@
                                   </small>
                               @endif
                           </td>
-                          <td class="text-center">
+                          <td class="text-center font-weight-bold 
+                            @if($value->percentage == 100)
+                                text-success
+                            @elseif($value->percentage > 50)
+                                text-warning
+                            @else
+                                text-danger
+                            @endif">
                               @if($value->simulation_date)
                                   @php
                                       $percentages[] = $value->percentage;
@@ -96,7 +103,7 @@
                                   </a>
                                   <a href="{{ route('version.schema.duplicate-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'schema_id' => $value->id]) }}" class="btn btn-secondary col ml-1">
                                         <i class="fas fa-clone"></i>
-                                        Duplikasi
+                                        Duplikat
                                   </a>
                               </div>
                           </td>
@@ -108,7 +115,14 @@
                       <td colspan="3" class="text-center font-weight-bold">
                           Rata-Rata Terverifikasi
                       </td>
-                      <td class="text-center font-weight-bold">
+                      <td class="text-center font-weight-bold 
+                        @if((array_sum($percentages)/count($percentages)) == 100)
+                            text-success
+                        @elseif((array_sum($percentages)/count($percentages)) > 50)
+                            text-warning
+                        @else
+                            text-danger
+                        @endif">
                           {{ array_sum($percentages)/count($percentages) }} %
                       </td>
                       <td>
