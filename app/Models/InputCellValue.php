@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class InputCellValue extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'cell',
+        'value',
+        'test_schema_id'
+    ];
 }

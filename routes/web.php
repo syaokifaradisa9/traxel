@@ -20,6 +20,13 @@ Route::middleware('guest')->group(function(){
 });
 
 Route::middleware('auth')->group(function(){
+    Route::name('logout')->get('logout', function(Request $request){
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return to_route('login');
+    });
+
     Route::controller(HomeController::class)->group(function(){
         Route::prefix('home')->group(function(){
             Route::get('/', 'index')->name('home');
@@ -27,7 +34,13 @@ Route::middleware('auth')->group(function(){
                 Route::get('/', 'excelVersion')->name('index');
                 Route::prefix("{version_id}/schema")->name('schema.')->group(function(){
                     Route::get('/', 'trackingSchema')->name('index');
+                    Route::get('create', 'createSimulation')->name("create-simulation");
+                    Route::post('store', 'storeSimulation')->name("store-simulation");
+                    Route::get('simulation', 'allSimulation')->name("all-simulation");
                     Route::prefix("{schema_id}")->group(function(){
+                        Route::get('edit', 'editSimulation')->name("edit-simulation");
+                        Route::get('duplicate', 'duplicateSimulation')->name("duplicate-simulation");
+                        Route::put('update', 'updateSimulation')->name("update-simulation");
                         Route::get('simulation', 'schemaSimulation')->name("simulation");
                         Route::get('detail', 'detailSimulation')->name("detail-simulation");
                     });
