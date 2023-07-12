@@ -9,8 +9,12 @@ class InputCellValue extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'cell',
+        'input_cell_id',
         'value',
         'test_schema_id'
     ];
+
+    public function input_cell(){
+        return $this->belongsTo(InputCell::class);
+    }
 }

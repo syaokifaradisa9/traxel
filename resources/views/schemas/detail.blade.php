@@ -40,7 +40,7 @@
                         <tr>
                             <td class="text-center align-middle" style="width: 50px">{{ $index + 1 }}</td>
                             <td class="text-center align-middle">
-                                {{ $output_value->cell }}
+                                {{ $output_value->output_cell->cell }}
                             </td>
                             <td class="text-center align-middle">
                                 {{ $output_value->expected_value }}
@@ -100,7 +100,7 @@
                         <tr>
                             <td class="text-center align-middle" style="width: 50px">{{ $index + 1 }}</td>
                             <td class="text-center align-middle">
-                                {{ $cell_input->cell }}
+                                {{ $cell_input->input_cell->cell }}
                             </td>
                             <td class="text-center align-middle">
                                 {{ $cell_input->value }}

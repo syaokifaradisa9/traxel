@@ -116,14 +116,20 @@
                           Rata-Rata Terverifikasi
                       </td>
                       <td class="text-center font-weight-bold 
-                        @if((array_sum($percentages)/count($percentages)) == 100)
+                        @php
+                            $sum = array_sum($percentages);
+                            $count = count($percentages);
+
+                            $percetage = $count == 0 ? 0 : ($sum/$count);
+                        @endphp
+                        @if($percetage == 100)
                             text-success
-                        @elseif((array_sum($percentages)/count($percentages)) > 50)
+                        @elseif($percetage > 50)
                             text-warning
                         @else
                             text-danger
                         @endif">
-                          {{ array_sum($percentages)/count($percentages) }} %
+                          {{ $percetage }} %
                       </td>
                       <td>
 

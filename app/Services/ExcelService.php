@@ -11,7 +11,7 @@ class ExcelService{
         $sheet = $excel->getSheetByName('ID');
 
         foreach($input as $value){
-            $sheet->getCell($value->cell)->setValue($value->value);
+            $sheet->getCell($value->input_cell->cell)->setValue($value->value);
         }
 
         return $excel->getSheetByName($sheetName);

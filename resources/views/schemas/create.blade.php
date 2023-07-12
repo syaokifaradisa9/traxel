@@ -49,14 +49,14 @@
                     @foreach ($inputCells as $inputCell)
                         @php
                             if(isset($inputCellValues)){
-                                $value = $inputCellValues->where('cell', $inputCell->cell)->first()->value;
+                                $value = $inputCellValues->where('input_cell_id', $inputCell->id)->first()->value;
                             }else{
                                 $value = '';
                             }
                         @endphp
                         <div class="form-group col-3">
                             <label><b>{{ $inputCell->cell_name . " (" . $inputCell->cell .")" }}</b></label>
-                            <input name="input-{{ $inputCell->cell }}" type="text" class="form-control" placeholder="{{ $inputCell->cell }}" value="{{ $value }}">
+                            <input name="input-{{ $inputCell->id }}" type="text" class="form-control" placeholder="NIlai Excel Cell {{ $inputCell->cell }}" value="{{ $value }}">
                         </div>
                     @endforeach
                 </div>
@@ -72,14 +72,14 @@
                     @foreach ($outputCells as $outputCell)
                         @php
                             if(isset($outputCellValues)){
-                                $value = $outputCellValues->where('cell', $outputCell->cell)->first()->expected_value;
+                                $value = $outputCellValues->where('output_cell_id', $outputCell->id)->first()->expected_value;
                             }else{
                                 $value = '';
                             }
                         @endphp
                         <div class="form-group col-3">
                             <label><b>{{ $outputCell->cell_name . " (" . $outputCell->cell . ")" }}</b></label>
-                            <input name="output-{{ $outputCell->cell }}" type="text" class="form-control" placeholder="{{ $outputCell->cell }}" value="{{ $value }}">
+                            <input name="output-{{ $outputCell->id }}" type="text" class="form-control" placeholder="Nilai Excel Cell {{ $outputCell->cell }}" value="{{ $value }}">
                         </div>
                     @endforeach
                 </div>

@@ -20,7 +20,11 @@ class TestSchema extends Model
     ];
 
     public function getPercentageAttribute(){
-        return number_format(OutputCellValue::where('test_schema_id', $this->id)->where('is_verified', true)->count()/OutputCellValue::where('test_schema_id', $this->id)->count(), 4) * 100;
+        $total_done = OutputCellValue::where('test_schema_id', $this->id)->where('is_verified', true)->count();
+        $total_test = OutputCellValue::where('test_schema_id', $this->id)->count();
+
+        $percentage = $total_test == 0 ? 0 : $total_done/$total_test;
+        return number_format($percentage, 4) * 100;
     }
 
     public function getSimulationDaysAgoAttribute(){

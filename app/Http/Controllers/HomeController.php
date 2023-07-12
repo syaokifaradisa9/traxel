@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Alkes;
 use App\Models\InputCell;
-use App\Models\InputCellValue;
 use App\Models\OutputCell;
-use App\Models\OutputCellValue;
 use App\Models\TestSchema;
+use App\Models\ExcelVersion;
+use Illuminate\Http\Request;
+use App\Models\InputCellValue;
 use App\Services\AlkesService;
 use App\Services\ExcelService;
-use App\Services\ExcelVersionService;
+use App\Models\OutputCellValue;
 use App\Services\TestSchemaService;
-use Illuminate\Http\Request;
+use App\Services\ExcelVersionService;
 
 class HomeController extends Controller
 {
@@ -31,12 +33,40 @@ class HomeController extends Controller
 
     public function excelVersion($alkesId){
         $versions = $this->excelVersionService->getVersionByAlkesId($alkesId);
-        return view('excel_version.index', compact('versions', 'alkesId'));
+        $excel_name = Alkes::find($alkesId)->excel_name;
+        return view('excel_version.index', compact('versions', 'alkesId', 'excel_name'));
+    }
+
+    public function createExcelVersion($alkesId){
+        return view('excel_version.create', compact('alkesId'));
+    }
+
+    public function storeExcelVersion(Request $request, $alkesId){
+        $is_success =  $this->excelVersionService->saveExcelVersion($request->all(), $alkesId);
+        if($is_success){
+            return to_route('version.index', ['alkes_id' => $alkesId])->with('success', "Berhasil Menambahkan Versi Excel");
+        }else{
+            return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
+        }
     }
 
     public function trackingSchema($alkesId, $versionId){
         $schemas = $this->testSchemaService->getTestSchemaByVersionId($versionId);
         return view('schemas.index', compact('schemas', 'alkesId', 'versionId'));
+    }
+
+    public function editCellNameExcelVersion($alkesId, $versionId, $type){
+        $cells = $type == "input" ? InputCell::where('excel_version_id', $versionId)->get() : OutputCell::where('excel_version_id', $versionId)->get();
+        return view('excel_version.cells', compact('alkesId', 'versionId', 'type', 'cells'));
+    }
+
+    public function updateCellNameExcelVersion(Request $request, $alkesId, $versionId, $type){
+        $is_success = $this->excelVersionService->updateCellNameByVersionId($request->all(), $versionId, $type);
+        if($is_success){
+            return to_route('version.index', ['alkes_id' => $alkesId])->with('success', "Berhasil Mengubah Nama Cell");
+        }else{
+            return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
+        }
     }
 
     public function createSimulation($alkesId, $versionId){

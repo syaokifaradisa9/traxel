@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class OutputCell extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'excel_version_id',
+        'cell'
+    ];
 }

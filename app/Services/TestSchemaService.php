@@ -41,7 +41,7 @@ class TestSchemaService{
         foreach($expected_output_cell_values as $expected_output_value){
             $output_value = OutputCellValue::find($expected_output_value->id);
             try{
-                $actual_value = $excel->getCell($output_value->cell)->getFormattedValue();
+                $actual_value = $excel->getCell($output_value->output_cell->cell)->getFormattedValue();
                 $output_value->actual_value = $actual_value;
                 if($actual_value == $expected_output_value->expected_value){
                     $output_value->is_verified = true;
@@ -74,20 +74,20 @@ class TestSchemaService{
                 "name" => $data['simulation_name'] ?? 'Simulasi Excel',
             ]);
     
-            foreach($data as $cell => $value){
-                if(str_contains($cell, "input")){
-                    $cell = str_replace("input-", "", $cell);
+            foreach($data as $key => $value){
+                if(str_contains($key, "input")){
+                    $input_cell_id = str_replace("input-", "", $key);
                     InputCellValue::create([
-                        'cell' => $cell,
+                        'input_cell_id' => $input_cell_id,
                         'value' => $value,
                         'test_schema_id' => $testSchema->id,
                     ]);
                 }
 
-                if(str_contains($cell, "output")){
-                    $cell = str_replace("output-", "", $cell);
+                if(str_contains($key, "output")){
+                    $output_cell_id = str_replace("output-", "", $key);
                     OutputCellValue::create([
-                        'cell' => $cell,
+                        'output_cell_id' => $output_cell_id,
                         'expected_value' => $value ?? '',
                         'test_schema_id' => $testSchema->id,
                     ]);
@@ -111,21 +111,21 @@ class TestSchemaService{
             $testSchema->name = $data['simulation_name'] ?? 'Simulasi Excel';
             $testSchema->save();
     
-            foreach($data as $cell => $value){
-                if(str_contains($cell, "input")){
-                    $cell = str_replace("input-", "", $cell);
+            foreach($data as $key => $value){
+                if(str_contains($key, "input")){
+                    $input_cell_id = str_replace("input-", "", $key);
                     $inputCellValue = InputCellValue::where([
-                        'cell' => $cell,
+                        'input_cell_id' => $input_cell_id,
                         'test_schema_id' => $testSchema->id,
                     ])->first();
                     $inputCellValue->value = $value ?? '';
                     $inputCellValue->save();
                 }
 
-                if(str_contains($cell, "output")){
-                    $cell = str_replace("output-", "", $cell);
+                if(str_contains($key, "output")){
+                    $output_cell_id = str_replace("output-", "", $key);
                     $outputCellValue = OutputCellValue::where([
-                        'cell' => $cell,
+                        'output_cell_id' => $output_cell_id,
                         'test_schema_id' => $testSchema->id
                     ])->first();
                     $outputCellValue->expected_value = $value ?? '';
@@ -138,6 +138,7 @@ class TestSchemaService{
             return true;
         }catch(Exception $e){
             DB::rollBack();
+            dd($e);
             return false;
         }
     }

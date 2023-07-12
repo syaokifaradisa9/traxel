@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\OutputCell;
 use App\Models\TestSchema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -11,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('output_cell_values', function (Blueprint $table) {
             $table->id();
-            $table->string('cell');
+            $table->foreignIdFor(OutputCell::class)->constrained();
             $table->string('expected_value');
             $table->string('actual_value')->nullable();
             $table->foreignIdFor(TestSchema::class)->constrained();

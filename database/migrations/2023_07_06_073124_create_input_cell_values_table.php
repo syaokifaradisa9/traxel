@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\InputCell;
 use App\Models\Scheme;
 use App\Models\TestSchema;
 use Illuminate\Database\Migrations\Migration;
@@ -12,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('input_cell_values', function (Blueprint $table) {
             $table->id();
-            $table->string('cell');
+            $table->foreignIdFor(InputCell::class)->constrained();
             $table->string('value');
             $table->foreignIdFor(TestSchema::class)->constrained();
             $table->timestamps();

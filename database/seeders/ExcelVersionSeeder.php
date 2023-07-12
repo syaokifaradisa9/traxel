@@ -139,7 +139,7 @@ class ExcelVersionSeeder extends Seeder
         }
     }
 
-    public function input_output_cell_values_seeder($test_schema_id){
+    public function input_output_cell_values_seeder($test_schema_id, $excel_version){
         $input_cell_values = [
             ["cell" => "E14", "value" => "25.0"],
             ["cell" => "F14", "value" => "25.3"],
@@ -194,8 +194,9 @@ class ExcelVersionSeeder extends Seeder
         ];
 
         foreach($input_cell_values as $input_cell_value){
+            $inputCell = InputCell::where(['cell' => $input_cell_value['cell'], 'excel_version_id' => $excel_version->id])->first();
             InputCellValue::create([
-                'cell' => $input_cell_value['cell'],
+                'input_cell_id' => $inputCell->id,
                 'value' => $input_cell_value['value'],
                 'test_schema_id' => $test_schema_id
             ]);
@@ -257,10 +258,11 @@ class ExcelVersionSeeder extends Seeder
             ["cell" => "B84", "expected_value" => "Alat yang dikalibrasi dalam batas toleransi dan dinyatakan LAIK PAKAI, dimana hasil atau skor akhir sama dengan atau melampaui 70 % berdasarkan Keputusan Direktur Jenderal Pelayanan Kesehatan No : HK.02.02/V/0412/2020"],
         ];
 
-        foreach($output_cell_values as $output_cell){
+        foreach($output_cell_values as $output_cell_value){
+            $outputCell = OutputCell::where(['cell' => $output_cell_value['cell'], 'excel_version_id' => $excel_version->id])->first();
             OutputCellValue::create([
-                'cell' => $output_cell['cell'],
-                'expected_value' => $output_cell['expected_value'],
+                'output_cell_id' => $outputCell->id,
+                'expected_value' => $output_cell_value['expected_value'],
                 'test_schema_id' => $test_schema_id
             ]);
         }
@@ -280,6 +282,6 @@ class ExcelVersionSeeder extends Seeder
             'excel_version_id' => $excel_version->id
         ]);
 
-        $this->input_output_cell_values_seeder($testSchema->id);
+        $this->input_output_cell_values_seeder($testSchema->id, $excel_version);
     }
 }
