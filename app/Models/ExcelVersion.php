@@ -13,6 +13,10 @@ class ExcelVersion extends Model
         'version_name'
     ]; 
 
+    public function alkes(){
+        return $this->belongsTo(Alkes::class);
+    }
+
     public function input_cell(){
         return $this->hasMany(InputCell::class);
     }

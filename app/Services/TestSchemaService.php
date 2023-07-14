@@ -33,7 +33,7 @@ class TestSchemaService{
 
         $excelversion = ExcelVersion::find($versionId);
         $excel = $this->excelService->getCalculateExcelValue(
-            public_path("excel\\ECG_Recorder-{$excelversion->version_name}.xlsx"),
+            public_path("excel\\{$excelversion->alkes->excel_name}-{$excelversion->version_name}.xlsx"),
             $input_cell_values,
             "LH"
         );
@@ -138,7 +138,6 @@ class TestSchemaService{
             return true;
         }catch(Exception $e){
             DB::rollBack();
-            dd($e);
             return false;
         }
     }

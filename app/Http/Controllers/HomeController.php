@@ -6,12 +6,11 @@ use App\Models\Alkes;
 use App\Models\InputCell;
 use App\Models\OutputCell;
 use App\Models\TestSchema;
-use App\Models\ExcelVersion;
 use Illuminate\Http\Request;
 use App\Models\InputCellValue;
 use App\Services\AlkesService;
-use App\Services\ExcelService;
 use App\Models\OutputCellValue;
+use App\Services\ExcelService;
 use App\Services\TestSchemaService;
 use App\Services\ExcelVersionService;
 
@@ -20,10 +19,12 @@ class HomeController extends Controller
     private $alkesService;
     private $excelVersionService;
     private $testSchemaService;
-    public function __construct(AlkesService $alkesService, ExcelVersionService $excelVersionService, TestSchemaService $testSchemaService){
+    private $excelService;
+    public function __construct(AlkesService $alkesService, ExcelVersionService $excelVersionService, TestSchemaService $testSchemaService, ExcelService $excelService){
         $this->alkesService = $alkesService;
         $this->excelVersionService = $excelVersionService;
         $this->testSchemaService = $testSchemaService;
+        $this->excelService = $excelService;
     }
 
     public function index(){
@@ -142,5 +143,12 @@ class HomeController extends Controller
             'alkes_id' => $alkesId,
             'version_id' => $versionId
         ])->with("success", "Simulasi Telah Dilakukan, Silahkan Lihat Hasil Pada Halaman Detail Skema Simulasi!");
+    }
+
+    public function cellTracker($alkesId, $versionId, $schemaId){
+        $excel_values = $this->excelService->getExcelCellValue($versionId, $schemaId);
+        $error_result_cells = $this->excelService->getErrorCellInResultSheet($schemaId);
+
+        return view('cell_trackers.index', compact('excel_values', 'alkesId', 'versionId', 'schemaId', 'error_result_cells'));
     }
 }

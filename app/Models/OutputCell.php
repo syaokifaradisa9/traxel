@@ -12,4 +12,8 @@ class OutputCell extends Model
         'excel_version_id',
         'cell'
     ];
+
+    public function output_cell_value(){
+        return $this->hasMany(OutputCellValue::class);
+    }
 }

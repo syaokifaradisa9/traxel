@@ -41,6 +41,7 @@ Route::middleware('auth')->group(function(){
                         Route::post('store', 'storeSimulation')->name("store-simulation");
                         Route::get('simulation', 'allSimulation')->name("all-simulation");
                         Route::prefix("{schema_id}")->group(function(){
+                            Route::get('cell-tracker', 'cellTracker')->name('cell-tracker');
                             Route::get('edit', 'editSimulation')->name("edit-simulation");
                             Route::get('duplicate', 'duplicateSimulation')->name("duplicate-simulation");
                             Route::put('update', 'updateSimulation')->name("update-simulation");

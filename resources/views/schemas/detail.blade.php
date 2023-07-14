@@ -17,7 +17,17 @@
     @endif
     <div class="card">
         <div class="card-header">
-            <h4>Tabel Output</h4>
+            <div class="col">
+                <h4>Tabel Output</h4>
+            </div>
+            <div class="col">
+                <div class="col text-right">
+                    <a href="{{ route('version.schema.cell-tracker', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'schema_id' => $schemaId]) }}" class="btn btn-primary px-4 py-1">
+                        <i class="fas fa-file-excel mr-1"></i>
+                        Tracking Cell Excel
+                    </a>
+                </div>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
