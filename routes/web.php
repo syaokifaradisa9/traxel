@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function(){
                             Route::put('update', 'updateSimulation')->name("update-simulation");
                             Route::get('simulation', 'schemaSimulation')->name("simulation");
                             Route::get('detail', 'detailSimulation')->name("detail-simulation");
+                            Route::get('detail-simulation', 'detailschemaSimulation')->name("detail-schema-simulation");
                         });
                     });
                     Route::get('/', 'editExcelVersion')->name('edit');

@@ -141,4 +141,8 @@ class TestSchemaService{
             return false;
         }
     }
+
+    public function detailschemaSimulation($versionId, $schemaId){
+        
+    }
 }

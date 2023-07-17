@@ -26,6 +26,10 @@
                         <i class="fas fa-file-excel mr-1"></i>
                         Tracking Cell Excel
                     </a>
+                    <a href="{{ route('version.schema.detail-schema-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'schema_id' => $schemaId]) }}" class="btn btn-success">
+                        <i class="fas fa-play-circle mr-1"></i>
+                        Simulasikan
+                    </a>
                 </div>
             </div>
         </div>

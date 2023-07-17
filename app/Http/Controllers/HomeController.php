@@ -145,6 +145,15 @@ class HomeController extends Controller
         ])->with("success", "Simulasi Telah Dilakukan, Silahkan Lihat Hasil Pada Halaman Detail Skema Simulasi!");
     }
 
+    public function detailschemaSimulation($alkesId, $versionId, $schemaId){
+        $this->testSchemaService->testSimulation($versionId, $schemaId);
+        return to_route('version.schema.detail-simulation', [
+            'alkes_id' => $alkesId,
+            'version_id' => $versionId,
+            'schema_id' => $schemaId
+        ])->with("success", "Simulasi Telah Dilakukan!");
+    }
+
     public function cellTracker($alkesId, $versionId, $schemaId){
         $excel_values = $this->excelService->getExcelCellValue($versionId, $schemaId);
         $error_result_cells = $this->excelService->getErrorCellInResultSheet($schemaId);
