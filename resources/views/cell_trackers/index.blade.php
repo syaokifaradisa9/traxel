@@ -17,6 +17,9 @@
         <div class="alert alert-danger mb-2">{{ Session::get('error') }}</div>
     @endif
     
+    @php
+        $error_predictions = [];
+    @endphp
     @foreach ($excel_values as $sheet_name => $values)
         <div class="card">
             <div class="card-body">
@@ -48,11 +51,31 @@
                                     @php
                                         $cell1 = $i < count($arrayPart1) ? $arrayPart1[$i]['cell'] : '';
                                         $cell2 = $i < count($arrayPart2) ? $arrayPart2[$i]['cell'] : '';
+
                                         $value1 = $i < count($arrayPart1) ? $arrayPart1[$i]['value'] : '';
                                         $value2 = $i < count($arrayPart2) ? $arrayPart2[$i]['value'] : '';
 
-                                        $text_class1 = str_contains($value1, "#VALUE!") ||  str_contains($value1, "#REF!") || str_contains($value1, "#DIV/0!") || preg_match('/=[A-Z]+\d+/', $value1, $_) ? 'text-danger' : '';
-                                        $text_class2 = str_contains($value2, "#VALUE!") ||  str_contains($value2, "#REF!") || str_contains($value2, "#DIV/0!") || preg_match('/=[A-Z]+\d+/', $value2, $_) ? 'text-danger' : '';
+                                        $is_1_error = str_contains($value1, "#VALUE!") ||  str_contains($value1, "#REF!") || str_contains($value1, "#DIV/0!") || preg_match('/=[A-Z]+\d+/', $value1, $_);
+                                        $is_2_error = str_contains($value2, "#VALUE!") ||  str_contains($value2, "#REF!") || str_contains($value2, "#DIV/0!") || preg_match('/=[A-Z]+\d+/', $value2, $_);
+                                        
+                                        $text_class1 = $is_1_error ? 'text-danger' : '';
+                                        $text_class2 = $is_2_error ? 'text-danger' : '';
+
+                                        if($is_1_error){
+                                            $error_predictions[] = [
+                                                "sheet" => $sheet_name, 
+                                                "cell" => $cell1, 
+                                                "value" => $value1
+                                            ];
+                                        }
+
+                                        if($is_2_error){
+                                            $error_predictions[] = [
+                                                "sheet" => $sheet_name, 
+                                                "cell" => $cell2, 
+                                                "value" => $value2
+                                            ];
+                                        }
 
                                         if($sheet_name == "LH"){
                                             $foundItemIndex1 = $error_result_cells->search(function ($item) use ($cell1) {
@@ -96,4 +119,58 @@
             </div>
         </div>
     @endforeach
+    <div class="card">
+        <div class="card-body">
+            <div id="accordion">
+                <div class="accordion">
+                    <div class="accordion-header" role="button" data-toggle="collapse" data-target="#panel-body-error">
+                    <h4>
+                        Prediksi Error
+                    </h4>
+                    </div>
+                    <div class="accordion-body collapse" id="panel-body-error" data-parent="#accordion">
+                        @php
+                            $halfSize = ceil(count($error_predictions) / 2);
+                            $arrayPart1 = array_slice($error_predictions, 0, $halfSize);
+                            $arrayPart2 = array_slice($error_predictions, $halfSize);
+                        @endphp
+        
+                        <table class="table-sm table-striped w-100">
+                            <tr>
+                                <th class="text-center" style="width: 15%">Sheet</th>
+                                <th class="text-center" style="width: 5%">Cell</th>
+                                <th class="text-center" style="width: 30%">Nilai</th>
+                                <th class="text-center" style="width: 15%">Sheet</th>
+                                <th class="text-center" style="width: 5%">Cell</th>
+                                <th class="text-center" style="width: 30%">NIlai</th>
+                            </tr>
+                            @php
+                                $rowCount = max(count($arrayPart1), count($arrayPart2));
+                            @endphp
+                            @for ($i = 0; $i < $rowCount; $i++)
+                                @php
+                                    $sheet1 = $i < count($arrayPart1) ? $arrayPart1[$i]['sheet'] : '';
+                                    $sheet2 = $i < count($arrayPart1) ? $arrayPart1[$i]['sheet'] : '';
+
+                                    $cell1 = $i < count($arrayPart1) ? $arrayPart1[$i]['cell'] : '';
+                                    $cell2 = $i < count($arrayPart2) ? $arrayPart2[$i]['cell'] : '';
+
+                                    $value1 = $i < count($arrayPart1) ? $arrayPart1[$i]['value'] : '';
+                                    $value2 = $i < count($arrayPart2) ? $arrayPart2[$i]['value'] : '';
+                                @endphp
+                                <tr>
+                                    <td class="text-center align-middle">{{ $sheet1 }}</td>
+                                    <td class="text-center align-middle">{{ $cell1 }}</td>
+                                    <td class="text-center align-middle">{{ $value1 }}</td>
+                                    <td class="text-center align-middle">{{ $sheet2 }}</td>
+                                    <td class="text-center align-middle">{{ $cell2 }}</td>
+                                    <td class="text-center align-middle">{{ $value2 }}</td>
+                                </tr>
+                            @endfor
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
