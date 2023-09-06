@@ -85,7 +85,11 @@
                                     {{ $output_cell_str }}
                                 </a>
                             </td>
-                            <td class="text-center align-middle" style="width: 150px">
+                            <td class="text-center align-middle" style="width: 300px">
+                                <a href="{{ route('version.edit', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-warning">
+                                    <i class="fas fa-edit mr-1"></i>
+                                    Edit
+                                </a>
                                 <a href="{{ route("version.schema.index", ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-primary">
                                     <i class="fas fa-exclamation-circle mr-1"></i>
                                     Tracking

@@ -17,6 +17,29 @@
         <div class="alert alert-danger mb-2">{{ Session::get('error') }}</div>
     @endif
     
+    <div class="card">
+        <div class="card-body">
+            <form action="{{ route('version.schema.cell-tracker', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'schema_id' => $schemaId]) }}" method="get">
+                <div class="form-group row pl-3">
+                    @foreach ($sheet_names as $sheet)
+                        <div class="form-check col-3">
+                            <input class="form-check-input" type="checkbox" id="{{ $sheet->getTitle() }}" name="{{ $sheet->getTitle() }}" @if(in_array($sheet->getTitle(), $selected_sheet))
+                                checked
+                            @endif>
+                            <label class="form-check-label" for="{{ $sheet->getTitle() }}">
+                                {{ $sheet->getTitle() }} 
+                            </label>
+                        </div>
+                        
+                    @endforeach
+                    
+                </div>
+                <button class="btn btn-primary w-100">
+                    Tracking
+                </button>
+            </form>
+        </div>
+    </div>
     @php
         $error_predictions = [];
     @endphp
@@ -55,8 +78,8 @@
                                         $value1 = $i < count($arrayPart1) ? $arrayPart1[$i]['value'] : '';
                                         $value2 = $i < count($arrayPart2) ? $arrayPart2[$i]['value'] : '';
 
-                                        $is_1_error = str_contains($value1, "#VALUE!") ||  str_contains($value1, "#REF!") || str_contains($value1, "#DIV/0!") || preg_match('/=[A-Z]+\d+/', $value1, $_);
-                                        $is_2_error = str_contains($value2, "#VALUE!") ||  str_contains($value2, "#REF!") || str_contains($value2, "#DIV/0!") || preg_match('/=[A-Z]+\d+/', $value2, $_);
+                                        $is_1_error = str_contains($value1, "#NUM!") || str_contains($value1, "#VALUE!") ||  str_contains($value1, "#REF!") || str_contains($value1, "#DIV/0!") || preg_match('/=[A-Z]+\d+/', $value1, $_);
+                                        $is_2_error = str_contains($value2, "#NUM!") || str_contains($value2, "#VALUE!") ||  str_contains($value2, "#REF!") || str_contains($value2, "#DIV/0!") || preg_match('/=[A-Z]+\d+/', $value2, $_);
                                         
                                         $text_class1 = $is_1_error ? 'text-danger' : '';
                                         $text_class2 = $is_2_error ? 'text-danger' : '';
@@ -150,7 +173,7 @@
                             @for ($i = 0; $i < $rowCount; $i++)
                                 @php
                                     $sheet1 = $i < count($arrayPart1) ? $arrayPart1[$i]['sheet'] : '';
-                                    $sheet2 = $i < count($arrayPart1) ? $arrayPart1[$i]['sheet'] : '';
+                                    $sheet2 = $i < count($arrayPart2) ? $arrayPart2[$i]['sheet'] : '';
 
                                     $cell1 = $i < count($arrayPart1) ? $arrayPart1[$i]['cell'] : '';
                                     $cell2 = $i < count($arrayPart2) ? $arrayPart2[$i]['cell'] : '';

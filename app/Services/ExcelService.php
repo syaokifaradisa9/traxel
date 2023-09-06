@@ -22,7 +22,25 @@ class ExcelService{
         return $excel->getSheetByName($sheetName);
     }
 
-    public function getExcelCellValue($versionId, $schemaId){
+    public function getAllSheetNames($versionId){
+        # Load Excel
+        $version = ExcelVersion::with('alkes')->find($versionId);
+        $excel_name = $version->alkes->excel_name;
+        $version_name = $version->version_name;
+        $spreadsheet = (new Xlsx())->load("excel/{$excel_name}-{$version_name}.xlsx");
+
+        # Pengambilan Semua Nama Sheet
+        $allSheets = $spreadsheet->getAllSheets();
+
+
+        return $allSheets;
+    }
+
+    public function getExcelCellValue($versionId, $schemaId, $selected_sheet){
+        if(!$selected_sheet){
+            return [];
+        }
+
         # Load Excel
         $version = ExcelVersion::with('alkes')->find($versionId);
         $excel_name = $version->alkes->excel_name;
@@ -61,9 +79,8 @@ class ExcelService{
             "rata rata pembacaan standar (g)", "interpolasi koreksi", "g/ml", "u95", "nl", "pembagi"
         ];
         foreach($allSheets as $sheet){
-            if(!in_array(strtolower(trim($sheet->getTitle())), ["bank kata", "riwayat revisi", "lk"])){
+            if(in_array($sheet->getTitle(), $selected_sheet)){
                 $sheet = $spreadsheet->getSheetByName($sheet->getTitle());
-
                 $highestRow = $sheet->getHighestRow();
                 $highestColumn = $sheet->getHighestColumn();
                 $highestColumnIndex = Coordinate::columnIndexFromString($highestColumn);

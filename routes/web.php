@@ -35,6 +35,8 @@ Route::middleware('auth')->group(function(){
                 Route::get('create', 'createExcelVersion')->name('create');
                 Route::post('store', 'storeExcelVersion')->name('store');
                 Route::prefix("{version_id}")->group(function(){
+                    Route::get('/edit', 'editExcelVersion')->name('edit');
+                    Route::put('/update', 'updateExcelVersion')->name('update');
                     Route::prefix("schema")->name('schema.')->group(function(){
                         Route::get('/', 'trackingSchema')->name('index');
                         Route::get('create', 'createSimulation')->name("create-simulation");
@@ -50,7 +52,6 @@ Route::middleware('auth')->group(function(){
                             Route::get('detail-simulation', 'detailschemaSimulation')->name("detail-schema-simulation");
                         });
                     });
-                    Route::get('/', 'editExcelVersion')->name('edit');
                     Route::get('{type}', 'editCellNameExcelVersion')->name('set-cell-name');
                     Route::post('{type}/update', 'updateCellNameExcelVersion')->name('update-cell-name');
                 });

@@ -6,11 +6,12 @@ use App\Models\Alkes;
 use App\Models\InputCell;
 use App\Models\OutputCell;
 use App\Models\TestSchema;
+use App\Models\ExcelVersion;
 use Illuminate\Http\Request;
 use App\Models\InputCellValue;
 use App\Services\AlkesService;
-use App\Models\OutputCellValue;
 use App\Services\ExcelService;
+use App\Models\OutputCellValue;
 use App\Services\TestSchemaService;
 use App\Services\ExcelVersionService;
 
@@ -44,6 +45,25 @@ class HomeController extends Controller
 
     public function storeExcelVersion(Request $request, $alkesId){
         $is_success =  $this->excelVersionService->saveExcelVersion($request->all(), $alkesId);
+        if($is_success){
+            return to_route('version.index', ['alkes_id' => $alkesId])->with('success', "Berhasil Menambahkan Versi Excel");
+        }else{
+            return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
+        }
+    }
+
+    public function editExcelVersion($alkesId, $versionId){
+        $version = ExcelVersion::with('input_cell', 'output_cell')->find($versionId);
+
+        $cells = $this->excelVersionService->getInputAndOutputCells($versionId);
+        $input_cells = $cells['input'];
+        $output_cells = $cells['output'];
+
+        return view('excel_version.create', compact('alkesId', 'version', 'input_cells', 'output_cells'));
+    }
+
+    public function updateExcelVersion(Request $request, $alkesId, $versionId){
+        $is_success =  $this->excelVersionService->updateExcelVersion($request->all(), $alkesId, $versionId);
         if($is_success){
             return to_route('version.index', ['alkes_id' => $alkesId])->with('success', "Berhasil Menambahkan Versi Excel");
         }else{
@@ -154,10 +174,19 @@ class HomeController extends Controller
         ])->with("success", "Simulasi Telah Dilakukan!");
     }
 
-    public function cellTracker($alkesId, $versionId, $schemaId){
-        $excel_values = $this->excelService->getExcelCellValue($versionId, $schemaId);
+    public function cellTracker(Request $request, $alkesId, $versionId, $schemaId){
+        $selected_sheet = [];
+        if($request->all()){
+            $data = $request->except('_token');
+            foreach($data as $sheet_name => $_){
+                $selected_sheet[] = str_replace("_", " ", $sheet_name);
+            }
+        }
+
+        $sheet_names = $this->excelService->getAllSheetNames($versionId);
+        $excel_values = $this->excelService->getExcelCellValue($versionId, $schemaId, $selected_sheet);
         $error_result_cells = $this->excelService->getErrorCellInResultSheet($schemaId);
 
-        return view('cell_trackers.index', compact('excel_values', 'alkesId', 'versionId', 'schemaId', 'error_result_cells'));
+        return view('cell_trackers.index', compact('excel_values', 'alkesId', 'versionId', 'schemaId', 'error_result_cells', 'sheet_names', 'selected_sheet'));
     }
 }

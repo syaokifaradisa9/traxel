@@ -35,7 +35,7 @@
             </div>
             <div class="card-body">
                 <div class="form-group">
-                    <input name="simulation_name" type="text" class="form-control" placeholder="Masukkan Nama Simulasi Excel" value="{{ $schema->name ?? '' }}">
+                    <input name="simulation_name" type="text" class="form-control" placeholder="Masukkan Nama Simulasi Excel" value="{{ old('simulation_name') ?? $schema->name ?? '' }}">
                 </div>
             </div>
         </div>
@@ -53,10 +53,12 @@
                             }else{
                                 $value = '';
                             }
+
+                            $form_name = "input-".$inputCell->id;
                         @endphp
                         <div class="form-group col-3">
                             <label><b>{{ $inputCell->cell_name . " (" . $inputCell->cell .")" }}</b></label>
-                            <input name="input-{{ $inputCell->id }}" type="text" class="form-control" placeholder="NIlai Excel Cell {{ $inputCell->cell }}" value="{{ $value }}">
+                            <input name="{{ $form_name }}" type="text" class="form-control" placeholder="NIlai Excel Cell {{ $inputCell->cell }}" value="{{ old($form_name) ?? $value }}">
                         </div>
                     @endforeach
                 </div>
@@ -76,10 +78,12 @@
                             }else{
                                 $value = '';
                             }
+
+                            $form_name = "output-".$outputCell->id;
                         @endphp
                         <div class="form-group col-3">
                             <label><b>{{ $outputCell->cell_name . " (" . $outputCell->cell . ")" }}</b></label>
-                            <input name="output-{{ $outputCell->id }}" type="text" class="form-control" placeholder="Nilai Excel Cell {{ $outputCell->cell }}" value="{{ $value }}">
+                            <input name="{{ $form_name }}" type="text" class="form-control" placeholder="Nilai Excel Cell {{ $outputCell->cell }}" value="{{ old($form_name) ?? $value }}">
                         </div>
                     @endforeach
                 </div>

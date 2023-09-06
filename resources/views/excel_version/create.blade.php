@@ -17,7 +17,7 @@
     @php
         $url = '';
         if(URLHelper::has('edit')){
-            $url = route('version.schema.update-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'schema_id' => $schema->id]);
+            $url = route('version.update', ['alkes_id' => $alkesId, 'version_id' => $version->id]);
         }else{
             $url = route('version.store', ['alkes_id' => $alkesId]);
         }
@@ -36,20 +36,28 @@
                 <div class="row">
                     <div class="form-group col">
                         <label for=""><b>Nama Versi Excel</b></label>
-                        <input name="version_name" type="text" class="form-control" placeholder="Masukkan Nama Versi Excel" value="{{ $excel_version->name ?? '' }}">
+                        <input name="version_name" type="text" class="form-control" placeholder="Masukkan Nama Versi Excel" value="{{ $version->version_name ?? '' }}">
+                        <small class="text-danger">
+                            Format versi mohon spasi dipisah dengan tanda -
+                        </small>
                     </div>
                     <div class="form-group col">
                         <label for=""><b>File Excel</b></label>
                         <input name="file" type="file" class="form-control">
+                        @if(URLHelper::has('edit'))
+                            <small class="text-danger">
+                                Excel sebelumnya ada <a class="text-danger font-weight-bold" href="{{ asset('excel/' . $version->alkes->excel_name."-".$version->version_name.".xlsx") }}">disini</a> (kosongkan jika tidak ingin mengganti file excel)
+                            </small>
+                        @endif
                     </div>
                 </div>
                 <div class="form-group">
                     <label for=""><b>Cell Input</b></label>
-                    <input name="input_cell" type="text" class="form-control" placeholder="Masukkan Cell Input Excel (Pisahkan dengan tanda koma)">
+                    <input name="input_cell" type="text" class="form-control" placeholder="Masukkan Cell Input Excel (Pisahkan dengan tanda koma)" value="{{ $input_cells ?? '' }}">
                 </div>
                 <div class="form-group">
                     <label for=""><b>Cell Output</b></label>
-                    <input name="output_cell" type="text" class="form-control" placeholder="Masukkan Cell Output Excel (Pisahkan dengan tanda koma)">
+                    <input name="output_cell" type="text" class="form-control" placeholder="Masukkan Cell Output Excel (Pisahkan dengan tanda koma)"  value="{{ $output_cells ?? '' }}">
                 </div>
                 <button class="btn btn-primary w-100" type="submit">
                     <i class="fas fa-save mr-1"></i>

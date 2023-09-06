@@ -31,9 +31,12 @@
                 </h4>
             </div>
             <div class="card-body">
+                @php
+                    $pattern = '/^[A-Za-z]+[0-9]+$/';
+                @endphp
                 @foreach ($cells as $value)
                     <div class="form-group row">
-                        <input name="{{ $value->id }}" type="text" class="form-control col-2 text-center" value="{{ $value->cell }}">
+                        <input name="{{ $value->id }}" type="text" class="form-control col-2 text-center @if(!preg_match($pattern, $value->cell)) text-danger is-invalid @endif" value="{{ $value->cell }}">
                         <input name="name-{{ $value->id }}" type="text" class="form-control col" placeholder="Nama Cell {{ $value->cell }}" value="{{ $value->cell_name ?? '' }}">
                     </div>
                 @endforeach
