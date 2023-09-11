@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Exception;
+use DivisionByZeroError;
 use App\Models\TestSchema;
 use App\Models\ExcelVersion;
 use App\Models\InputCellValue;
@@ -50,6 +51,10 @@ class TestSchemaService{
                     $output_value->is_verified = false;
                     $output_value->error_description = "Nilai Ekspektasi Tidak sama Dengan Nilai Aktual";
                 }
+            }catch (DivisionByZeroError $e) {
+                $output_value->actual_value = "#DIV/0";
+                $output_value->is_verified = false;
+                $output_value->error_description = "#DIV/0";
             }catch(Exception $e){
                 $output_value->verified = false;
                 $output_value->error_description = $e->getMessage();
