@@ -2,15 +2,62 @@
 
 namespace App\Services;
 
+use Exception;
 use App\Models\Alkes;
 use App\Models\InputCell;
 use App\Models\OutputCell;
 use App\Models\ExcelVersion;
-use App\Models\OutputCellValue;
-use Exception;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class ExcelVersionService{
+    private function getCellWithRedTextInSheet($file_path, $sheet_name){
+        $spreadsheet = (new Xlsx())->load($file_path);
+        $sheet = $spreadsheet->getSheetByName($sheet_name);
+
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+        $highestColumnIndex = Coordinate::columnIndexFromString($highestColumn);
+
+        $input_merged_cells = [];
+        foreach($sheet->getMergeCells() as $mergedCell){
+            $first_cell = explode(":", $mergedCell)[0];
+            $color_hex = $sheet->getCell($first_cell)->getStyle()->getFont()->getColor()->getRGB();
+
+            if($color_hex == "FF0000"){
+                $input_merged_cells[] = $mergedCell;
+            }
+        }
+
+        $cell_with_red_text = [];
+        for ($row = 1; $row <= $highestRow; $row++) {
+            for ($column = 1; $column <= $highestColumnIndex; $column++) {
+                $cell = Coordinate::stringFromColumnIndex($column) . $row;
+                
+                $cell_has_merged = false;
+                foreach($input_merged_cells as $merged_cell){
+                    if($sheet->getCell($cell)->isInRange($merged_cell)){
+                        $cell_has_merged = true;
+                        $first_cell = explode(":", $merged_cell)[0];
+                        if(!in_array($first_cell, $cell_with_red_text)){
+                            $cell_with_red_text[] = $cell;
+                        }
+                    }
+                }
+
+                if(!$cell_has_merged){
+                    $color_hex = $sheet->getCell($cell)->getStyle()->getFont()->getColor()->getRGB();
+                    if($color_hex == "FF0000"){
+                        $cell_with_red_text[] = $cell;
+                    }
+                }
+            }
+        }
+
+        return $cell_with_red_text;
+    }
+
     public function getVersionByAlkesId($alkesId){
         return ExcelVersion::with(['input_cell', 'output_cell'])->where('alkes_id', $alkesId)->get();
     }
@@ -24,25 +71,26 @@ class ExcelVersionService{
             $file = $data['file'];
             $fileName = $alkes->excel_name . "-" . $data['version_name']. ".xlsx";
             $filePath = public_path("excel");
+
             $file->move($filePath, $fileName);
     
+            // Mengambil Cell Secara Otomatis Dari Excel
+            $cell_inputs = $this->getCellWithRedTextInSheet($filePath . "/" . $fileName, "ID");
+            $cell_outputs = $this->getCellWithRedTextInSheet($filePath . "/" . $fileName, "LH");
+
             $version = ExcelVersion::create([
                 'version_name' => $data['version_name'],
                 'alkes_id' => $alkesId
             ]);
     
-            $input_cells = preg_replace('/\s+/', '', $data['input_cell']);
-            $input_cells = explode(",", $input_cells);
-            foreach($input_cells as $inputCell){
+            foreach($cell_inputs as $inputCell){
                 InputCell::create([
                     'excel_version_id' => $version->id,
                     'cell' => $inputCell
                 ]);
             }
     
-            $output_cells = preg_replace('/\s+/', '', $data['output_cell']);
-            $output_cells = explode(",", $output_cells);
-            foreach($output_cells as $outputCell){
+            foreach($cell_outputs as $outputCell){
                 OutputCell::create([
                     'excel_version_id' => $version->id,
                     'cell' => $outputCell
@@ -91,15 +139,16 @@ class ExcelVersionService{
         try{
             DB::beginTransaction();
 
-            if(isset($data['file'])){
-                $alkes = Alkes::find($alkesId);
+            $alkes = Alkes::find($alkesId);
 
+            $fileName = $alkes->excel_name . "-" . $data['version_name']. ".xlsx";
+            $filePath = public_path("excel");
+        
+            if(isset($data['file'])){
                 $file = $data['file'];
-                $fileName = $alkes->excel_name . "-" . $data['version_name']. ".xlsx";
-                $filePath = public_path("excel");
                 $file->move($filePath, $fileName);
             }
-    
+
             $version = ExcelVersion::find($versionId);
 
             $cells = $this->getInputAndOutputCells($versionId);
@@ -107,12 +156,11 @@ class ExcelVersionService{
             $previous_input_cells = explode(", ", $cells['input']);
             $previous_output_cells = explode(", ", $cells['output']);
 
-            // Update Input Cell
-            $input_cells = preg_replace('/\s+/', '', $data['input_cell']);
-            $input_cells = explode(",", $input_cells);
-            $input_cells = array_unique($input_cells);
+            // Mengambil Cell Secara Otomatis Dari Excel
+            $cell_inputs = $this->getCellWithRedTextInSheet($filePath . "/" . $fileName, "ID");
+            $cell_outputs = $this->getCellWithRedTextInSheet($filePath . "/" . $fileName, "LH");
 
-            foreach($input_cells as $inputCell){
+            foreach($cell_inputs as $inputCell){
                 if(!in_array($inputCell, $previous_input_cells)){
                     InputCell::create([
                         'excel_version_id' => $version->id,
@@ -122,7 +170,7 @@ class ExcelVersionService{
             }
 
             foreach($previous_input_cells as $inputCell){
-                if(!in_array($inputCell, $input_cells)){
+                if(!in_array($inputCell, $cell_inputs)){
                     InputCell::where([
                         'excel_version_id' => $version->id,
                         'cell' => $inputCell
@@ -130,12 +178,7 @@ class ExcelVersionService{
                 }
             }
     
-            // Update Output Cell
-            $output_cells = preg_replace('/\s+/', '', $data['output_cell']);
-            $output_cells = explode(",", $output_cells);
-            $output_cells = array_unique($output_cells);
-
-            foreach($output_cells as $outputCell){
+            foreach($cell_outputs as $outputCell){
                 if(!in_array($outputCell, $previous_output_cells)){
                     OutputCell::create([
                         'excel_version_id' => $version->id,
@@ -145,7 +188,7 @@ class ExcelVersionService{
             }
 
             foreach($previous_output_cells as $outputCell){
-                if(!in_array($outputCell, $output_cells)){
+                if(!in_array($outputCell, $cell_outputs)){
                     OutputCell::where([
                         'excel_version_id' => $version->id,
                         'cell' => $outputCell

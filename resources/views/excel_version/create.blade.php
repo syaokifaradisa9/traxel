@@ -53,11 +53,11 @@
                 </div>
                 <div class="form-group">
                     <label for=""><b>Cell Input</b></label>
-                    <input name="input_cell" type="text" class="form-control" placeholder="Masukkan Cell Input Excel (Pisahkan dengan tanda koma)" value="{{ $input_cells ?? '' }}">
+                    <input name="input_cell" type="text" class="form-control" placeholder="Cell Input Excel Otomatis Akan Terisi Setelah Selesai Mengupload File Excel" value="{{ $input_cells ?? '' }}" readonly>
                 </div>
                 <div class="form-group">
                     <label for=""><b>Cell Output</b></label>
-                    <input name="output_cell" type="text" class="form-control" placeholder="Masukkan Cell Output Excel (Pisahkan dengan tanda koma)"  value="{{ $output_cells ?? '' }}">
+                    <input name="output_cell" type="text" class="form-control" placeholder="Cell Output Excel Otomatis Akan Terisi Setelah Selesai Mengupload File Excel"  value="{{ $output_cells ?? '' }}" readonly>
                 </div>
                 <button class="btn btn-primary w-100" type="submit">
                     <i class="fas fa-save mr-1"></i>
