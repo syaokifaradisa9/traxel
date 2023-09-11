@@ -10,5 +10,12 @@
                 </a>
             </li>
         </ul>
+        <ul class="sidebar-menu">
+            <li class="@if(str_contains(Request::url(), "tutorial")) active @endif">
+                <a class="nav-link" href="{{ route('tutorial') }}">
+                    <i class="fas fa-book"></i> <span>Penggunaan Aplikasi</span>
+                </a>
+            </li>
+        </ul>
     </aside>
 </div>

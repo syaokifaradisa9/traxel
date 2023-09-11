@@ -60,4 +60,8 @@ Route::middleware('auth')->group(function(){
             });
         });
     });
+
+    Route::name('tutorial')->get('tutorial', function(){
+        return view('tutorial.index');
+    });
 });
