@@ -94,6 +94,10 @@
                                     <i class="fas fa-exclamation-circle mr-1"></i>
                                     Tracking
                                 </a>
+                                <a href="{{ route('version.delete', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-danger btn-delete">
+                                    <i class="fas fa-trash-alt mr-1"></i>
+                                    Hapus
+                                </a>
                             </td>
                         </tr>
                     @endforeach
@@ -102,4 +106,20 @@
               </div>
         </div>
     </div>
+@endsection
+
+@section('js-extends')
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const deleteButtons = document.querySelectorAll(".btn-delete");
+
+            deleteButtons.forEach(function (button) {
+                button.addEventListener("click", function (event) {
+                    if (!confirm("Apakah Anda yakin ingin menghapus versi ini?")) {
+                        event.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

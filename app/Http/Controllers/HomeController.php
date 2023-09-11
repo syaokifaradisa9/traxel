@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Alkes;
 use App\Models\InputCell;
 use App\Models\OutputCell;
@@ -31,6 +32,11 @@ class HomeController extends Controller
     public function index(){
         $alkes = $this->alkesService->getAlkes();
         return view('home.index', compact('alkes'));
+    }
+
+    public function export_data($alkes_id){
+        $alkes = Alkes::with('version')->find($alkes_id);
+        dd(json_encode($alkes));
     }
 
     public function excelVersion($alkesId){
@@ -63,12 +69,17 @@ class HomeController extends Controller
     }
 
     public function updateExcelVersion(Request $request, $alkesId, $versionId){
-        $is_success =  $this->excelVersionService->updateExcelVersion($request->all(), $alkesId, $versionId);
+        $is_success = $this->excelVersionService->updateExcelVersion($request->all(), $alkesId, $versionId);
         if($is_success){
             return to_route('version.index', ['alkes_id' => $alkesId])->with('success', "Berhasil Menambahkan Versi Excel");
         }else{
             return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
         }
+    }
+
+    public function deleteExcelVersion($alkesId, $versionId){
+        $this->excelVersionService->deleteExcelVersion($versionId);
+        return to_route('version.index', ['alkes_id' => $alkesId]);
     }
 
     public function trackingSchema($alkesId, $versionId){

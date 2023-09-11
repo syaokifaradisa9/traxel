@@ -68,5 +68,7 @@
   
   <script src="{{ asset('vendor/stisla/js/stisla.js') }}"></script>
   <script src="{{ asset('vendor/stisla/js/scripts.js') }}"></script>
+
+  @yield('js-extends')
 </body>
 </html>

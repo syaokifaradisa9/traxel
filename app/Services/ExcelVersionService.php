@@ -6,7 +6,10 @@ use Exception;
 use App\Models\Alkes;
 use App\Models\InputCell;
 use App\Models\OutputCell;
+use App\Models\TestSchema;
 use App\Models\ExcelVersion;
+use App\Models\InputCellValue;
+use App\Models\OutputCellValue;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
@@ -235,6 +238,31 @@ class ExcelVersionService{
         }catch(Exception $e){
             DB::rollBack();
             dd($e);
+            return false;
+        }
+    }
+
+    public function deleteExcelVersion($versionId){
+        try{
+            DB::beginTransaction();
+
+            $test_schemas = TestSchema::where('excel_version_id', $versionId)->get();
+            foreach($test_schemas as $test_schema){
+                InputCellValue::where('test_schema_id', $test_schema->id)->delete();
+                OutputCellValue::where('test_schema_id', $test_schema->id)->delete();
+
+                $test_schema->delete();
+            }
+            
+            InputCell::where("excel_version_id", $versionId)->delete();
+            OutputCell::where("excel_version_id", $versionId)->delete();
+
+            ExcelVersion::find($versionId)->delete();
+
+            DB::commit();
+            return true;
+        }catch(Exception $e){
+            DB::rollBack();
             return false;
         }
     }
