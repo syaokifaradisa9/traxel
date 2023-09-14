@@ -72,34 +72,34 @@
                                 @endphp
                                 @for ($i = 0; $i < $rowCount; $i++)
                                     @php
-                                        $cell1 = $i < count($arrayPart1) ? $arrayPart1[$i]['cell'] : '';
-                                        $cell2 = $i < count($arrayPart2) ? $arrayPart2[$i]['cell'] : '';
+                                        if($arrayPart1[$i] ?? false){
+                                            $cell1 = $i < count($arrayPart1) ? $arrayPart1[$i]['cell'] : '';
+                                            $value1 = $i < count($arrayPart1) ? $arrayPart1[$i]['value'] : '';
+                                            $is_1_error = str_contains($value1[0], "#") || (strlen($value1) > 0 ? str_contains($value1[0], "=") : false) || str_contains($value1[0], 'Unsupported operand types: string + string');
+                                            $text_class1 = $is_1_error ? 'text-danger' : '';
+                                            if($is_1_error){
+                                                $error_predictions[] = [
+                                                    "sheet" => $sheet_name, 
+                                                    "cell" => $cell1, 
+                                                    "value" => $value1
+                                                ];
+                                            }
+                                        }
 
-                                        $value1 = $i < count($arrayPart1) ? $arrayPart1[$i]['value'] : '';
-                                        $value2 = $i < count($arrayPart2) ? $arrayPart2[$i]['value'] : '';
-
-                                        $is_1_error = str_contains($value1[0], "#") || (strlen($value1) > 0 ? str_contains($value1[0], "=") : false) || str_contains($value1, 'Unsupported operand types: string + string');
-                                        $is_2_error = str_contains($value2[0], "#") || (strlen($value2) > 0 ? str_contains($value2[0], "=") : false) || str_contains($value2, 'Unsupported operand types: string + string');
+                                        if($arrayPart2[$i] ?? false){
+                                            $cell2 = $i < count($arrayPart2) ? $arrayPart2[$i]['cell'] : '';
+                                            $value2 = $i < count($arrayPart2) ? $arrayPart2[$i]['value'] : '';
+                                            $is_2_error = str_contains($value2[0], "#") || (strlen($value2) > 0 ? str_contains($value2[0], "=") : false) || str_contains($value1[0], 'Unsupported operand types: string + string');
+                                            $text_class2 = $is_2_error ? 'text-danger' : '';
+                                            if($is_2_error){
+                                                $error_predictions[] = [
+                                                    "sheet" => $sheet_name, 
+                                                    "cell" => $cell2, 
+                                                    "value" => $value2
+                                                ];
+                                            }
+                                        }
                                         
-                                        $text_class1 = $is_1_error ? 'text-danger' : '';
-                                        $text_class2 = $is_2_error ? 'text-danger' : '';
-
-                                        if($is_1_error){
-                                            $error_predictions[] = [
-                                                "sheet" => $sheet_name, 
-                                                "cell" => $cell1, 
-                                                "value" => $value1
-                                            ];
-                                        }
-
-                                        if($is_2_error){
-                                            $error_predictions[] = [
-                                                "sheet" => $sheet_name, 
-                                                "cell" => $cell2, 
-                                                "value" => $value2
-                                            ];
-                                        }
-
                                         if($sheet_name == "LH"){
                                             $foundItemIndex1 = $error_result_cells->search(function ($item) use ($cell1) {
                                                 return $item['cell'] == $cell1;
@@ -127,11 +127,11 @@
                                         <td class="text-center align-middle {{ $text_class1 }}">
                                             {{ $value1 }}
                                         </td>
-                                        <td class="text-center align-middle {{ $text_class2 }}">
-                                            {{ $cell2 }}
+                                        <td class="text-center align-middle {{ $text_class2 ?? '' }}">
+                                            {{ $cell2 ?? '' }}
                                         </td>
-                                        <td class="text-center align-middle {{ $text_class2 }}">
-                                            {{ $value2 }}
+                                        <td class="text-center align-middle {{ $text_class2 ?? '' }}">
+                                            {{ $value2 ?? '' }}
                                         </td>
                                     </tr>
                                 @endfor
