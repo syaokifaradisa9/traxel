@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Exception;
+use TypeError;
 use DivisionByZeroError;
 use App\Models\ExcelVersion;
 use App\Models\InputCellValue;
@@ -105,6 +106,11 @@ class ExcelService{
                                 'value' => "#DIV/0!"
                             ];
                         }catch(Exception $e){
+                            $inner_excel_values[] = [
+                                "cell" => $cell,
+                                'value' => $e->getMessage()
+                            ];
+                        }catch(TypeError $e){
                             $inner_excel_values[] = [
                                 "cell" => $cell,
                                 'value' => $e->getMessage()

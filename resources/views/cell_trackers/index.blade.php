@@ -78,8 +78,8 @@
                                         $value1 = $i < count($arrayPart1) ? $arrayPart1[$i]['value'] : '';
                                         $value2 = $i < count($arrayPart2) ? $arrayPart2[$i]['value'] : '';
 
-                                        $is_1_error = str_contains($value1, "#N/A") || str_contains($value1, "#NUM!") || str_contains($value1, "#VALUE!") ||  str_contains($value1, "#REF!") || str_contains($value1, "#DIV/0!") || (strlen($value1) > 0 ? str_contains($value1[0], "=") : false);
-                                        $is_2_error = str_contains($value2, "#N/A") || str_contains($value2, "#NUM!") || str_contains($value2, "#VALUE!") ||  str_contains($value2, "#REF!") || str_contains($value2, "#DIV/0!") || (strlen($value2) > 0 ? str_contains($value2[0], "=") : false);
+                                        $is_1_error = str_contains($value1[0], "#") || (strlen($value1) > 0 ? str_contains($value1[0], "=") : false) || str_contains($value1, 'Unsupported operand types: string + string');
+                                        $is_2_error = str_contains($value2[0], "#") || (strlen($value2) > 0 ? str_contains($value2[0], "=") : false) || str_contains($value2, 'Unsupported operand types: string + string');
                                         
                                         $text_class1 = $is_1_error ? 'text-danger' : '';
                                         $text_class2 = $is_2_error ? 'text-danger' : '';
