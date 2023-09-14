@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Alkes extends Model
 {
     use HasFactory;
+    public function version(){
+        return $this->hasMany(ExcelVersion::class);
+    }
 }

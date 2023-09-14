@@ -30,7 +30,6 @@ Route::middleware('auth')->group(function(){
     Route::controller(HomeController::class)->group(function(){
         Route::prefix('home')->group(function(){
             Route::get('/', 'index')->name('home');
-            Route::get('/{alkes_id}/export', 'export_data')->name('export_data');
             Route::prefix('{alkes_id}/version')->name('version.')->group(function(){
                 Route::get('/', 'excelVersion')->name('index');
                 Route::get('create', 'createExcelVersion')->name('create');

@@ -18,7 +18,7 @@
                     <tr>
                       <th class="text-center" style="width: 50px">No.</th>
                       <th class="text-center">Alat Kesehatan</th>
-                      <th class="text-center" style="width: 100px">Aksi</th>
+                      <th class="text-center" style="width: 200px">Aksi</th>
                     </tr>
                   </thead>
                   <tbody>

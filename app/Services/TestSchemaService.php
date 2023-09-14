@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Exception;
+use TypeError;
 use DivisionByZeroError;
 use App\Models\TestSchema;
 use App\Models\ExcelVersion;
@@ -56,9 +57,13 @@ class TestSchemaService{
                 $output_value->is_verified = false;
                 $output_value->error_description = "#DIV/0";
             }catch(Exception $e){
-                $output_value->verified = false;
+                $output_value->is_verified = false;
+                $output_value->error_description = $e->getMessage();
+            }catch(TypeError $e){
+                $output_value->is_verified = false;
                 $output_value->error_description = $e->getMessage();
             }
+
             $output_value->save();
         }
 

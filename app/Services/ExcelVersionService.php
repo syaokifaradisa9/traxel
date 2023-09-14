@@ -61,6 +61,23 @@ class ExcelVersionService{
         return $cell_with_red_text;
     }
 
+    private function getInputCellValueWithRedTextInSheet($file_path, $input_cells){
+        $spreadsheet = (new Xlsx())->load($file_path);
+        $sheet = $spreadsheet->getSheetByName("ID");
+
+        $input_cell_values = [];
+        foreach ($input_cells as $input_cell){
+            $value = $sheet->getCell($input_cell)->getFormattedValue();
+
+            $input_cell_values[] = [
+                "cell" => $input_cell,
+                "value" => $value
+            ];
+        }
+
+        return $input_cell_values;
+    }
+
     public function getVersionByAlkesId($alkesId){
         return ExcelVersion::with(['input_cell', 'output_cell'])->where('alkes_id', $alkesId)->get();
     }
@@ -81,22 +98,45 @@ class ExcelVersionService{
             $cell_inputs = $this->getCellWithRedTextInSheet($filePath . "/" . $fileName, "ID");
             $cell_outputs = $this->getCellWithRedTextInSheet($filePath . "/" . $fileName, "LH");
 
+            // Mengambil Cell Value ID
+            $input_cell_values = $this->getInputCellValueWithRedTextInSheet($filePath . "/" . $fileName, $cell_inputs);
+
             $version = ExcelVersion::create([
                 'version_name' => $data['version_name'],
                 'alkes_id' => $alkesId
             ]);
     
-            foreach($cell_inputs as $inputCell){
-                InputCell::create([
+            $test_schema = TestSchema::create([
+                'name' => date('Y-m-d'),
+                'excel_version_id' => $version->id
+            ]);
+
+            foreach($input_cell_values as $input_cell_value){
+                $input_cell = InputCell::create([
                     'excel_version_id' => $version->id,
-                    'cell' => $inputCell
+                    'cell' => $input_cell_value['cell']
+                ]);
+
+                InputCellValue::create([
+                    'input_cell_id' => $input_cell->id,
+                    'value' => $input_cell_value['value'],
+                    'test_schema_id' => $test_schema->id
                 ]);
             }
     
             foreach($cell_outputs as $outputCell){
-                OutputCell::create([
+                $output_cell = OutputCell::create([
                     'excel_version_id' => $version->id,
                     'cell' => $outputCell
+                ]);
+
+                OutputCellValue::create([
+                    'output_cell_id' => $output_cell->id,
+                    'expected_value' => "",
+                    'actual_value' => "",
+                    'test_schema_id' => $test_schema->id,
+                    'is_verified' => false,
+                    'error_description' => "",
                 ]);
             }
 
