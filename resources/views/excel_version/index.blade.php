@@ -26,12 +26,12 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
+            <div class="table-responsive mt-4">
                 <table class="table-sm table-striped w-100" id="order-table">
                   <thead>
                     <tr>
                         <th class="text-center" style="width: 50px">No.</th>
-                        <th class="text-center" style="width: 150px">
+                        <th class="text-center" style="width: 100px">
                             Versi Excel <br>
                             <small>Klik untuk mendownload</small>
                         </th>
@@ -43,7 +43,7 @@
                             Output Cell <br>
                             <small>Klik untuk mengubah nama cell</small>
                         </th>
-                        <th class="text-center" style="width: 100px">Aksi</th>
+                        <th class="text-center">Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -85,18 +85,25 @@
                                     {{ $output_cell_str }}
                                 </a>
                             </td>
-                            <td class="text-center align-middle" style="width: 300px">
-                                <a href="{{ route('version.edit', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-warning">
+                            <td class="text-center align-middle" style="width: 150px">
+                                <a href="{{ route('version.edit', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-warning w-100">
                                     <i class="fas fa-edit mr-1"></i>
                                     Edit
                                 </a>
-                                <a href="{{ route("version.schema.index", ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-primary">
+                                <br>
+                                <a href="{{ route("version.schema.index", ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-primary w-100">
                                     <i class="fas fa-exclamation-circle mr-1"></i>
                                     Tracking
                                 </a>
-                                <a href="{{ route('version.delete', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-danger btn-delete">
+                                <br>
+                                <a href="{{ route('version.delete', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-danger btn-delete w-100">
                                     <i class="fas fa-trash-alt mr-1"></i>
                                     Hapus
+                                </a>
+                                <br>
+                                <a href="{{ route('version.export', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-danger btn-info w-100">
+                                    <i class="fas fa-file-export mr-1"></i>
+                                    Export
                                 </a>
                             </td>
                         </tr>

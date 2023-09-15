@@ -33,11 +33,13 @@ Route::middleware('auth')->group(function(){
             Route::prefix('{alkes_id}/version')->name('version.')->group(function(){
                 Route::get('/', 'excelVersion')->name('index');
                 Route::get('create', 'createExcelVersion')->name('create');
+                Route::post('import', 'importExcelVersion')->name('import');
                 Route::post('store', 'storeExcelVersion')->name('store');
                 Route::prefix("{version_id}")->group(function(){
                     Route::get('/edit', 'editExcelVersion')->name('edit');
                     Route::get('/delete', 'deleteExcelVersion')->name('delete');
                     Route::put('/update', 'updateExcelVersion')->name('update');
+                    Route::get('/export', 'exportExcelVersion')->name('export');
                     Route::prefix("schema")->name('schema.')->group(function(){
                         Route::get('/', 'trackingSchema')->name('index');
                         Route::get('create', 'createSimulation')->name("create-simulation");

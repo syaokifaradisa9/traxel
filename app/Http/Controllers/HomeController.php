@@ -13,8 +13,10 @@ use App\Models\InputCellValue;
 use App\Services\AlkesService;
 use App\Services\ExcelService;
 use App\Models\OutputCellValue;
+use Illuminate\Support\Facades\DB;
 use App\Services\TestSchemaService;
 use App\Services\ExcelVersionService;
+use App\Http\Requests\ImportVersionRequest;
 
 class HomeController extends Controller
 {
@@ -32,11 +34,6 @@ class HomeController extends Controller
     public function index(){
         $alkes = $this->alkesService->getAlkes();
         return view('home.index', compact('alkes'));
-    }
-
-    public function export_data($alkes_id){
-        $alkes = Alkes::with('version')->find($alkes_id);
-        dd(json_encode($alkes));
     }
 
     public function excelVersion($alkesId){
@@ -80,6 +77,151 @@ class HomeController extends Controller
     public function deleteExcelVersion($alkesId, $versionId){
         $this->excelVersionService->deleteExcelVersion($versionId);
         return to_route('version.index', ['alkes_id' => $alkesId]);
+    }
+
+    public function exportExcelVersion($alkesId, $versionId){
+        $version      = ExcelVersion::select('alkes_id', 'version_name')->find($versionId)->toArray();
+        $input_cells  = InputCell::select('cell', 'cell_name')->where('excel_version_id', $versionId)->get();
+        $output_cells = OutputCell::select('cell', 'cell_name')->where('excel_version_id', $versionId)->get();
+        
+        $test_schemas = [];
+        $schemes = TestSchema::where('excel_version_id', $versionId)->get();
+        foreach ($schemes as $scheme){
+            $schema = [
+                'name' => $scheme->name
+            ];
+            
+            $inputCellValues = [];
+            $input_cell_values = InputCellValue::with('input_cell')->where('test_schema_id', $scheme->id)->get();
+            
+            foreach($input_cell_values as $cell_value){
+                $inputCellValues[] = [
+                    "cell" => $cell_value->input_cell->cell,
+                    "value" => $cell_value->value
+                ];
+            }
+
+            $schema['input_cell_values'] = $inputCellValues;
+
+            $outputCellValues = [];
+            $output_cell_value = OutputCellValue::with('output_cell')->where('test_schema_id', $scheme->id)->get();
+            
+            foreach($output_cell_value as $cell_value){
+                $outputCellValues[] = [
+                    "cell" => $cell_value->output_cell->cell,
+                    "value" => $cell_value->value
+                ];
+            }
+
+            $schema['output_cell_value'] = $outputCellValues;
+
+            $test_schemas[] = $schema;
+        }
+
+        $version['cell_input'] = $input_cells;
+        $version['cell_output'] = $output_cells;
+        $version['schema'] = $test_schemas;
+        
+        $jsonData = json_encode($version);
+
+        $alkes = Alkes::find($alkesId);
+        $filename = $alkes->name . " Versi " . $version['version_name'] . '.json';
+        header('Content-Type: application/json');
+        header("Content-Disposition: attachment; filename=$filename");
+
+        echo $jsonData;
+        exit;
+    }
+
+    public function importExcelVersion(ImportVersionRequest $request, $alkesId){
+        try{
+            DB::beginTransaction();
+
+            $request->file('json')->move(
+                public_path("temp"), 
+                "version.json"
+            );
+    
+            $fileContents = file_get_contents(public_path("temp/version.json"));
+            $data = json_decode($fileContents, true);
+
+            // Menyimpan Versi
+            $alkes_id = $data['alkes_id'];
+
+            $alkes = Alkes::find($alkes_id);
+            $version_name = $data['version_name'];
+    
+            $fileName = $alkes->excel_name . "-" . $version_name. ".xlsx";
+            $filePath = public_path("excel");
+
+            $request->file('excel')->move($filePath, $fileName);
+
+            $excel_version = ExcelVersion::create([
+                'alkes_id' => $alkes_id,
+                'version_name' => $version_name
+            ]);
+    
+            // Menyimpan Cell Input
+            $cell_inputs = $data['cell_input'];
+            foreach($cell_inputs as $cell_input){
+                InputCell::create([
+                    'cell' => $cell_input['cell'],
+                    'cell_name' => $cell_input['cell_name'],
+                    'excel_version_id' => $excel_version->id
+                ]);
+            }
+         
+            // Menyimpan Cell Output
+            $cell_outputs = $data['cell_output'];
+            foreach($cell_outputs as $cell_output){
+                OutputCell::create([
+                    'cell' => $cell_output['cell'],
+                    'excel_version_id' => $excel_version->id
+                ]);
+            }
+    
+            // Menyimpan Skema
+            $schemas = $data['schema'];
+            foreach($schemas as $schema){
+                $test_schema = TestSchema::create([
+                    'name' => $schema['name'],
+                    'excel_version_id' => $excel_version->id
+                ]);
+    
+                foreach($schema['input_cell_values'] as $input_cell){
+                    $cell_id = InputCell::where('excel_version_id', $excel_version->id)
+                                        ->where('cell', $input_cell['cell'])
+                                        ->first()->id;
+    
+                    InputCellValue::create([
+                        'input_cell_id' => $cell_id,
+                        'value' => $input_cell['value'],
+                        'test_schema_id' => $test_schema->id
+                    ]);
+                }
+    
+                foreach($schema['output_cell_value'] as $input_cell){
+                    $cell_id = OutputCell::where('excel_version_id', $excel_version->id)
+                                        ->where('cell', $input_cell['cell'])
+                                        ->first()->id;
+                    
+                    OutputCellValue::create([
+                        'output_cell_id' => $cell_id,
+                        'expected_value' => $input_cell['value'] ?? '',
+                        'actual_value' => '',
+                        'test_schema_id' => $test_schema->id,
+                        'is_verified' => false,
+                        'error_description' => '',
+                    ]);
+                }
+            }
+
+            DB::commit();
+            return to_route('version.index', ['alkes_id' => $alkes_id])->with('success', "Sukses Mengimport Versi Excel");
+        }catch(Exception $e){
+            DB::rollBack();
+            return back()->withInput()->with('error', 'Terjadi Kesalahan, Silahkan Coba Lagi!');
+        }
     }
 
     public function trackingSchema($alkesId, $versionId){

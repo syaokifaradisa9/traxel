@@ -103,7 +103,6 @@ class AlkesSeeder extends Seeder
                 'id' => 23,
                 'name' => 'Examination lamp (Lampu Tindakan)', 
                 'excel_name' => 'Examination_Lamp'
-
             ],[
                 'id' => 24,
                 'name' => 'Flowmeter (regulator oksigen)', 
@@ -181,7 +180,8 @@ class AlkesSeeder extends Seeder
                 'excel_name' => 'Pulse_Oxymetry'
             ],[
                 'id' => 43,
-                'name' => 'Short Wave Diathermi'
+                'name' => 'Short Wave Diathermi',
+                'excel_name' => 'Short_Wave_Diathermi',
             ],[
                 'id' => 44,
                 'name' => 'Sphygmomanometer', 
@@ -200,7 +200,8 @@ class AlkesSeeder extends Seeder
                 'excel_name' => 'Sterilisator_Kering'
             ],[
                 'id' => 48,
-                'name' => 'Suction Thorax'
+                'name' => 'Suction Thorax',
+                'excel_name' => 'Suction_Thorax',
             ],[
                 'id' => 49,
                 'name' => 'Syringe Pump', 
@@ -235,7 +236,8 @@ class AlkesSeeder extends Seeder
                 'excel_name' => 'USG'
             ],[
                 'id' => 57,
-                'name' => 'UV Lamp'
+                'name' => 'UV Lamp',
+                'excel_name' => 'UV_Lamp',
             ],[
                 'id' => 58,
                 'name' => 'UV Sterilizer', 
@@ -262,20 +264,24 @@ class AlkesSeeder extends Seeder
                 'excel_name' => 'Water_Bath'
             ],[
                 'id' => 64,
-                'name' => 'Mikropipet Multi Channel'
+                'name' => 'Mikropipet Multi Channel',
+                'excel_name' => 'Mikropipet_Multi_Channel',
             ],[
                 'id' => 65,
-                'name' => 'Paraffin Bath'
+                'name' => 'Paraffin Bath',
+                'excel_name' => 'Paraffin_Bath',
             ],[
                 'id' => 66,
                 'name' => 'Stirer', 
                 'excel_name' => 'Stirer'
             ],[
                 'id' => 67,
-                'name' => 'Medical Freezer'
+                'name' => 'Medical Freezer',
+                'excel_name' => 'Medical_Freezer',
             ],[
                 'id' => 68,
-                'name' => 'Blood Warmer'
+                'name' => 'Blood Warmer',
+                'excel_name' => 'Blood_Warmer',
             ],[
                 'id' => 69,
                 'name' => 'Blood Solution Warmer', 
@@ -290,23 +296,28 @@ class AlkesSeeder extends Seeder
                 'excel_name' => 'Defibrillator_With_ECG_With_SPO2'
             ],[
                 'id' => 72,
-                'name' => 'Thoracic Aspirator'
+                'name' => 'Thoracic Aspirator',
+                'excel_name' => 'Thoracic_Aspirator',
             ],[
                 'id' => 73,
-                'name' => 'Tracheal Aspirator'
+                'name' => 'Tracheal Aspirator',
+                'excel_name' => 'Tracheal_Aspirator',
             ],[
                 'id' => 74,
-                'name' => 'Suction Pump Saliva'
+                'name' => 'Suction Pump Saliva',
+                'excel_name' => 'Suction_Pump_Saliva'
             ],[
                 'id' => 75,
-                'name' => 'Ventilator Transport'
+                'name' => 'Ventilator Transport',
+                'excel_name' => 'Ventilator_Transport'
             ],[
                 'id' => 76,
                 'name' => 'High Flow Nasal Cannula', 
                 'excel_name' => 'High_Flow_Nasal_Cannula'
             ],[
                 'id' => 77,
-                'name' => 'Cold Flow'
+                'name' => 'Cold Flow',
+                "excel_name" => 'Cold_Flow'
             ],[
                 'id' => 78,
                 'name' => 'Timbangan Dewasa', 
@@ -325,10 +336,12 @@ class AlkesSeeder extends Seeder
                 'excel_name' => 'Thermometer_Digital'
             ],[
                 'id' => 82,
-                'name' => 'BPAP'
+                'name' => 'BPAP',
+                "excel_name" => "BPAP"
             ],[
                 'id' => 83,
-                'name' => 'Resusitasi paru'
+                'name' => 'Resusitasi paru',
+                "excel_name" => "Resusitasi_Paru"
             ],
         ];
 
