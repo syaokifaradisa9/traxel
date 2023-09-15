@@ -75,7 +75,7 @@
                                         if($arrayPart1[$i] ?? false){
                                             $cell1 = $i < count($arrayPart1) ? $arrayPart1[$i]['cell'] : '';
                                             $value1 = $i < count($arrayPart1) ? $arrayPart1[$i]['value'] : '';
-                                            $is_1_error = str_contains($value1[0], "#") || (strlen($value1) > 0 ? str_contains($value1[0], "=") : false) || str_contains($value1[0], 'Unsupported operand types: string + string');
+                                            $is_1_error = str_contains($value1[0], "#") || (strlen($value1) > 0 ? str_contains($value1[0], "=") : false) || str_contains($value1, 'Unsupported operand types: string + string') || str_contains($value1, 'internal error');
                                             $text_class1 = $is_1_error ? 'text-danger' : '';
                                             if($is_1_error){
                                                 $error_predictions[] = [
@@ -89,7 +89,7 @@
                                         if($arrayPart2[$i] ?? false){
                                             $cell2 = $i < count($arrayPart2) ? $arrayPart2[$i]['cell'] : '';
                                             $value2 = $i < count($arrayPart2) ? $arrayPart2[$i]['value'] : '';
-                                            $is_2_error = str_contains($value2[0], "#") || (strlen($value2) > 0 ? str_contains($value2[0], "=") : false) || str_contains($value1[0], 'Unsupported operand types: string + string');
+                                            $is_2_error = str_contains($value2[0], "#") || (strlen($value2) > 0 ? str_contains($value2[0], "=") : false) || str_contains($value2, 'Unsupported operand types: string + string') || str_contains($value2, 'internal error');
                                             $text_class2 = $is_2_error ? 'text-danger' : '';
                                             if($is_2_error){
                                                 $error_predictions[] = [
