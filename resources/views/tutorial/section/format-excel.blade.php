@@ -16,6 +16,41 @@
                             <img src="{{ asset('tutorial-img/format-excel/LH.png') }}" width="100%" class="ml-1 border">
                         </li>
                         <li class="mt-4">
+                            <b class="text-danger">
+                                Format penulisan alat ukur bisa disamakan    
+                            </b> <br>
+                            <b>Format</b>
+                            <ul>
+                                <li>
+                                    [nama_alat], Merek : [nama_merek], Model : [nama_model], SN : [sn]
+                                </li>
+                                <li>
+                                    [nama_alat], Merek : [nama_merek], Tipe : [nama_tipe], SN : [sn]
+                                </li>
+                            </ul>
+                            <b>Ketentuan</b>
+                            <ul>
+                                <li>
+                                    Setelah nama_alat, nama_merek, nama_model, nama_tipe tambakan tanda koma tanpa spasi
+                                </li>
+                                <li>
+                                    Sebelum kata Merek, Model, Tipe dan SN tambahkan 1 spasi
+                                </li>
+                                <li>
+                                    Tambahkan spasi diantara tanda :
+                                </li>
+                            </ul>
+                            <b>Contoh</b>
+                            <ul>
+                                <li>Electrical Safety Analyzer, Merek : Fluke, Model : ESA 620, SN : 1834020</li>
+                                <li>Electrical Safety Analyzer, Merek : Fluke, Model : ESA 615, SN : 3148908</li>
+                                <li>Electrical Safety Analyzer, Merek : Fluke, Model : ESA 615, SN : 4669058</li>
+                                <li>Digital Caliper, Merek : Mitutoyo, Model : CD-6"CSX, SN : 07414369</li>
+                                <li>Digital Caliper, Merek : Mitutoyo, Model : CD-6"CSX, SN : 07414362</li>
+                                <li>Digital Caliper, Merek : Mitutoyo, Model : CD-6"PSX, SN : 11011858</li>
+                            </ul>
+                        </li>
+                        <li class="mt-4">
                             <span class="text-danger font-weight-bold">Tambahkan sheet SERTIFIKAT</span>, 
                             referensi bisa dilihat <a href="{{ asset('excel/ECG_Recorder-07-07-2023.xlsx') }}">disini</a>. 
                             Jangan lupa untuk <span class="text-danger font-weight-bold">menambahkan cell untuk LAIK dan TIDAK LAIK pada cell H1</span>.
