@@ -108,8 +108,8 @@ class HomeController extends Controller
             
             foreach($output_cell_value as $cell_value){
                 $outputCellValues[] = [
-                    "cell" => $cell_value->expected_value,
-                    "value" => $cell_value->value
+                    "cell" => $cell_value->output_cell->cell,
+                    "value" => $cell_value->expected_value
                 ];
             }
 
