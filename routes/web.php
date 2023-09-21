@@ -40,19 +40,46 @@ Route::middleware('auth')->group(function(){
                     Route::get('/delete', 'deleteExcelVersion')->name('delete');
                     Route::put('/update', 'updateExcelVersion')->name('update');
                     Route::get('/export', 'exportExcelVersion')->name('export');
-                    Route::prefix("schema")->name('schema.')->group(function(){
-                        Route::get('/', 'trackingSchema')->name('index');
-                        Route::get('create', 'createSimulation')->name("create-simulation");
-                        Route::post('store', 'storeSimulation')->name("store-simulation");
-                        Route::get('simulation', 'allSimulation')->name("all-simulation");
-                        Route::prefix("{schema_id}")->group(function(){
-                            Route::get('cell-tracker', 'cellTracker')->name('cell-tracker');
-                            Route::get('edit', 'editSimulation')->name("edit-simulation");
-                            Route::get('duplicate', 'duplicateSimulation')->name("duplicate-simulation");
-                            Route::put('update', 'updateSimulation')->name("update-simulation");
-                            Route::get('simulation', 'schemaSimulation')->name("simulation");
-                            Route::get('detail', 'detailSimulation')->name("detail-simulation");
-                            Route::get('detail-simulation', 'detailschemaSimulation')->name("detail-schema-simulation");
+                    Route::prefix('calibrator-group')->name('calibrator-group.')->group(function(){
+                        Route::get('/', 'calibratorGroupIndex')->name('index');
+                        Route::post('/', 'calibratorGroupStore')->name('store');
+                        Route::post('import', 'calibratorGroupImport')->name('import');
+                        Route::prefix("{group_id}")->group(function(){
+                            Route::get('/', 'calibratorGroupEdit')->name('edit');
+                            Route::put('/', 'calibratorGroupUpdate')->name('update');
+                            Route::get('export', 'calibratorGroupExport')->name('export');
+                            Route::get('delete', 'calibratorGroupDelete')->name('delete');
+                            Route::prefix("calibrator")->name('calibrator.')->group(function(){
+                                Route::get('/', 'calibratorIndex')->name('index');
+                                Route::post('/', 'calibratorStore')->name('store');
+                                Route::prefix("{id}")->group(function(){
+                                    Route::get('edit', 'calibratorEdit')->name('edit');
+                                    Route::put('update', 'calibratorUpdate')->name('update');
+                                    Route::get('delete', 'calibratorDelete')->name('delete');
+                                });
+                            });
+                        });
+                    });
+                    Route::prefix('schema_group')->name('schema_group.')->group(function(){
+                        Route::get('/', 'trackingSchemaGroup')->name("index");
+                        Route::get('create', 'createSchemaGroup')->name('create-schemagroup');
+                        Route::post('store', 'storeSimulationGroup')->name("store-schemagroup");
+                        Route::prefix("{group_id}")->group(function(){
+                            Route::prefix("schema")->name('schema.')->group(function(){
+                                Route::get('/', 'trackingSchema')->name('index');
+                                Route::get('create', 'createSimulation')->name("create-simulation");
+                                Route::post('store', 'storeSimulation')->name("store-simulation");
+                                Route::get('simulation', 'allSimulation')->name("all-simulation");
+                                Route::prefix("{schema_id}")->group(function(){
+                                    Route::get('cell-tracker', 'cellTracker')->name('cell-tracker');
+                                    Route::get('edit', 'editSimulation')->name("edit-simulation");
+                                    Route::get('duplicate', 'duplicateSimulation')->name("duplicate-simulation");
+                                    Route::put('update', 'updateSimulation')->name("update-simulation");
+                                    Route::get('simulation', 'schemaSimulation')->name("simulation");
+                                    Route::get('detail', 'detailSimulation')->name("detail-simulation");
+                                    Route::get('detail-simulation', 'detailschemaSimulation')->name("detail-schema-simulation");
+                                });
+                            });
                         });
                     });
                     Route::get('{type}', 'editCellNameExcelVersion')->name('set-cell-name');

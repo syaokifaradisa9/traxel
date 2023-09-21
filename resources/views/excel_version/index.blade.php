@@ -30,20 +30,20 @@
                 <table class="table-sm table-striped w-100" id="order-table">
                   <thead>
                     <tr>
-                        <th class="text-center" style="width: 50px">No.</th>
-                        <th class="text-center" style="width: 100px">
+                        <th class="text-center" style="width: 5%">No.</th>
+                        <th class="text-center" style="width: 10%">
                             Versi Excel <br>
                             <small>Klik untuk mendownload</small>
                         </th>
-                        <th class="text-center">
+                        <th class="text-center" style="width: auto">
                             Input Cell <br>
                             <small>Klik untuk mengubah nama cell</small>
                         </th>
-                        <th class="text-center">
+                        <th class="text-center" style="width: auto">
                             Output Cell <br>
                             <small>Klik untuk mengubah nama cell</small>
                         </th>
-                        <th class="text-center">Aksi</th>
+                        <th class="text-center" style="width: 15%">Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -85,26 +85,27 @@
                                     {{ $output_cell_str }}
                                 </a>
                             </td>
-                            <td class="text-center align-middle" style="width: 150px">
+                            <td class="text-center align-middle">
+                                <a href="{{ route('version.calibrator-group.index', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-dark w-100">
+                                    <i class="fas fa-edit mr-1"></i>
+                                    Kalibrator
+                                </a>
+                                <a href="{{ route("version.schema_group.index", ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-primary w-100">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                    Group Tracking
+                                </a>
                                 <a href="{{ route('version.edit', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-warning w-100">
                                     <i class="fas fa-edit mr-1"></i>
-                                    Edit
+                                    Edit Versi
                                 </a>
-                                <br>
-                                <a href="{{ route("version.schema.index", ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-primary w-100">
-                                    <i class="fas fa-exclamation-circle mr-1"></i>
-                                    Tracking
-                                </a>
-                                <br>
                                 <a href="{{ route('version.delete', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-danger btn-delete w-100">
                                     <i class="fas fa-trash-alt mr-1"></i>
                                     Hapus
                                 </a>
-                                <br>
-                                <a href="{{ route('version.export', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-danger btn-info w-100">
+                                {{-- <a href="{{ route('version.export', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-danger btn-info w-100">
                                     <i class="fas fa-file-export mr-1"></i>
                                     Export
-                                </a>
+                                </a> --}}
                             </td>
                         </tr>
                     @endforeach

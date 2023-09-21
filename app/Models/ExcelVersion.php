@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\GroupCalibrator;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ExcelVersion extends Model
 {
@@ -23,5 +24,9 @@ class ExcelVersion extends Model
 
     public function output_cell(){
         return $this->hasMany(OutputCell::class);
+    }
+
+    public function group_calibrator(){
+        return $this->hasMany(GroupCalibrator::class);
     }
 }

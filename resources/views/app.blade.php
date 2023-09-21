@@ -54,7 +54,7 @@
           Copyright &copy; 2023 <div class="bullet"></div> Developed By <a href="https://www.instagram.com/syaokifaradisa09" target="_blank">Muhammad Syaoki Faradisa</a>
         </div>
         <div class="footer-right">
-          1.0.0
+          2.0.0
         </div>
       </footer>
     </div>

@@ -4,7 +4,8 @@
     'section_headers' => [
         ["menu" => "Home", "is_active" => false, 'href' => route('home')],
         ["menu" => "Versi Excel", "is_active" => false, 'href' => route('version.index', ['alkes_id' => $alkesId])],
-        ["menu" => "Simulasi", "is_active" => true, 'href' => route('version.schema.index', ['alkes_id' => $alkesId, 'version_id' => $versionId])],
+        ["menu" => "Group Simulasi", "is_active" => false, 'href' => route('version.schema_group.index', ['alkes_id' => $alkesId, 'version_id' => $versionId])],
+        ["menu" => "Simulasi", "is_active" => true, 'href' => ''],
     ]
 ])
 
@@ -20,13 +21,9 @@
                 <h4>Tabel Skema Percobaan</h4>
             </div>
             <div class="col-6 text-right">
-                <a href="{{ route('version.schema.all-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId]) }}" class="btn btn-success">
+                <a href="{{ route('version.schema_group.schema.all-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'group_id' => $groupId]) }}" class="btn btn-success">
                     <i class="fas fa-play-circle mr-1"></i>
                     Simulasikan Semua
-                </a>
-                <a href="{{ route('version.schema.create-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId]) }}" class="btn btn-primary">
-                    <i class="fas fa-plus mr-1"></i>
-                    Tambah Skema percobaan
                 </a>
             </div>
         </div>
@@ -38,7 +35,7 @@
                     <th class="text-center">Nama Skema<br>Percobaan</th>
                     <th class="text-center">Simulasi<br>terakhir</th>
                     <th class="text-center">Persentase<br>Terverifikasi</th>
-                    <th class="text-center" style="width: 300px">Aksi</th>
+                    <th class="text-center" style="width: 170px">Aksi</th>
                   </tr>
                 </thead>
                 @php
@@ -48,8 +45,14 @@
                   @foreach ($schemas as $index => $value)
                       <tr>
                           <td class="text-center align-middle" style="width: 50px">{{ $index + 1 }}</td>
-                          <td class="text-center align-middle">
-                              {{ $value->name }}
+                          <td class="align-middle">
+                            @php
+                                $names = explode("|", $value->name);
+                                unset($names[0]);
+                            @endphp
+                            @foreach ($names as $name)
+                                {{ $name }} <br>
+                            @endforeach
                           </td>
                           <td class="text-center">
                               @if($value->simulation_date)
@@ -86,25 +89,19 @@
                               @endif
                           </td>
                           <td class="text-center align-middle">
-                              <div class="row">
-                                  <a href="{{ route('version.schema.simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, "schema_id" => $value->id]) }}" class="btn btn-success col mr-1">
-                                      <i class="fas fa-play-circle mr-1"></i>
-                                      Simulasikan
-                                  </a>
-                                  <a href="{{ route('version.schema.detail-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, "schema_id" => $value->id]) }}" class="btn btn-info col ml-1">
-                                      <i class="fas fa-search mr-1"></i>
-                                      Detail Tracking
-                                  </a>
-                              </div>
-                              <div class="row mt-1">
-                                  <a href="{{ route('version.schema.edit-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'schema_id' => $value->id]) }}" class="btn btn-primary col mr-1">
+                                <div class="row">
+                                    <a href="{{ route('version.schema_group.schema.simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, "group_id" => $groupId, 'schema_id' => $value->id]) }}" class="btn btn-success col-12">
+                                        <i class="fas fa-play-circle mr-1"></i>
+                                        Simulasikan
+                                    </a>
+                                    <a href="{{ route('version.schema_group.schema.detail-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, "group_id" => $groupId, 'schema_id' => $value->id]) }}" class="btn btn-info col-12">
+                                        <i class="fas fa-search mr-1"></i>
+                                        Tracking
+                                    </a>
+                                    <a href="{{ route('version.schema_group.schema.edit-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, "group_id" => $groupId, 'schema_id' => $value->id]) }}" class="btn btn-primary col-12 mr-1">
                                         <i class="fas fa-edit"></i>
                                         Edit
-                                  </a>
-                                  <a href="{{ route('version.schema.duplicate-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'schema_id' => $value->id]) }}" class="btn btn-secondary col ml-1">
-                                        <i class="fas fa-clone"></i>
-                                        Duplikat
-                                  </a>
+                                    </a>
                               </div>
                           </td>
                       </tr>

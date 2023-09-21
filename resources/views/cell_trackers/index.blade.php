@@ -4,9 +4,10 @@
     'section_headers' => [
         ["menu" => "Home", "is_active" => false, 'href' => route('home')],
         ["menu" => "Versi Excel", "is_active" => false, 'href' => route('version.index', ['alkes_id' => $alkesId])],
-        ["menu" => "Simulasi", "is_active" => false, 'href' => route('version.schema.index', ['alkes_id' => $alkesId, 'version_id' => $versionId])],
-        ["menu" => "Detail", "is_active" => false, 'href' => route('version.schema.detail-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'schema_id' => $schemaId])],
-        ["menu" => "Tracker", "is_active" => true, 'href' => ""],
+        ["menu" => "Group Simulasi", "is_active" => false, 'href' => route('version.schema_group.index', ['alkes_id' => $alkesId, 'version_id' => $versionId])],
+        ["menu" => "Simulasi", "is_active" => false, 'href' => route('version.schema_group.schema.index', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'group_id' => $groupId])],
+        ["menu" => "Detail", "is_active" => false, 'href' => route('version.schema_group.schema.detail-schema-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'group_id' => $groupId, 'schema_id' => $schemaId])],
+        ["menu" => "Tracker", "is_active" => true, 'href' => ''],
     ]
 ])
 
@@ -19,7 +20,7 @@
     
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('version.schema.cell-tracker', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'schema_id' => $schemaId]) }}" method="get">
+            <form action="{{ route('version.schema_group.schema.cell-tracker', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'schema_id' => $schemaId, 'group_id' => $groupId]) }}" method="get">
                 <div class="form-group row pl-3">
                     @foreach ($sheet_names as $sheet)
                         <div class="form-check col-3">

@@ -118,6 +118,7 @@ class AlkesSeeder extends Seeder
             ],[
                 'id' => 27,
                 'name' => 'Heart Rate Monitor', 
+                'excel_name' => 'Heart_Rate_Monitor'
             ],[
                 'id' => 28,
                 'name' => 'Infant Warmer', 

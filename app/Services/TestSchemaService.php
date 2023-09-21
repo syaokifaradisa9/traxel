@@ -17,8 +17,8 @@ class TestSchemaService{
         $this->excelService = $excelService;
     }
 
-    public function getTestSchemaByVersionId($versionId){
-        return TestSchema::where('excel_version_id', $versionId)->get();
+    public function getTestSchemaByGroupId($groupId){
+        return TestSchema::where('test_schema_group_id', $groupId)->get();
     }
 
     public function getInputCellValueBySchemaId($schemaId){
@@ -118,20 +118,8 @@ class TestSchemaService{
             DB::beginTransaction();
 
             $testSchema = TestSchema::find($schemaId);
-            $testSchema->name = $data['simulation_name'] ?? 'Simulasi Excel';
-            $testSchema->save();
     
             foreach($data as $key => $value){
-                if(str_contains($key, "input")){
-                    $input_cell_id = str_replace("input-", "", $key);
-                    $inputCellValue = InputCellValue::where([
-                        'input_cell_id' => $input_cell_id,
-                        'test_schema_id' => $testSchema->id,
-                    ])->first();
-                    $inputCellValue->value = $value ?? '';
-                    $inputCellValue->save();
-                }
-
                 if(str_contains($key, "output")){
                     $output_cell_id = str_replace("output-", "", $key);
                     $outputCellValue = OutputCellValue::where([
@@ -143,11 +131,12 @@ class TestSchemaService{
                 }
             }
 
-            $this->testSimulation($testSchema->excel_version_id, $testSchema->id);
+            $this->testSimulation($testSchema->test_schema_group->excel_version_id, $testSchema->id);
             DB::commit();
             return true;
         }catch(Exception $e){
             DB::rollBack();
+            dd($e);
             return false;
         }
     }

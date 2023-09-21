@@ -5,18 +5,21 @@ namespace App\Http\Controllers;
 use Exception;
 use App\Models\Alkes;
 use App\Models\InputCell;
+use App\Models\Calibrator;
 use App\Models\OutputCell;
 use App\Models\TestSchema;
 use App\Models\ExcelVersion;
 use Illuminate\Http\Request;
-use App\Models\InputCellValue;
 use App\Services\AlkesService;
 use App\Services\ExcelService;
+use App\Models\GroupCalibrator;
 use App\Models\OutputCellValue;
-use Illuminate\Support\Facades\DB;
+use App\Models\TestSchemaGroup;
 use App\Services\TestSchemaService;
 use App\Services\ExcelVersionService;
+use App\Services\GroupSimulationService;
 use App\Http\Requests\ImportVersionRequest;
+use App\Services\CalibratorService;
 
 class HomeController extends Controller
 {
@@ -24,12 +27,25 @@ class HomeController extends Controller
     private $excelVersionService;
     private $testSchemaService;
     private $excelService;
-    public function __construct(AlkesService $alkesService, ExcelVersionService $excelVersionService, TestSchemaService $testSchemaService, ExcelService $excelService){
-        $this->alkesService = $alkesService;
-        $this->excelVersionService = $excelVersionService;
-        $this->testSchemaService = $testSchemaService;
-        $this->excelService = $excelService;
+    private $groupSimulationService;
+    private $calibratorService;
+    public function __construct(
+            AlkesService $alkesService, 
+            ExcelVersionService $excelVersionService, 
+            TestSchemaService $testSchemaService, 
+            ExcelService $excelService,
+            GroupSimulationService $groupSimulationService,
+            CalibratorService $calibratorService,
+        ){
+            $this->alkesService = $alkesService;
+            $this->excelVersionService = $excelVersionService;
+            $this->testSchemaService = $testSchemaService;
+            $this->excelService = $excelService;
+            $this->groupSimulationService = $groupSimulationService;
+            $this->calibratorService = $calibratorService;
     }
+
+    /* ============================== Excel Version ============================== */
 
     public function index(){
         $alkes = $this->alkesService->getAlkes();
@@ -47,8 +63,7 @@ class HomeController extends Controller
     }
 
     public function storeExcelVersion(Request $request, $alkesId){
-        $is_success =  $this->excelVersionService->saveExcelVersion($request->all(), $alkesId);
-        if($is_success){
+        if($this->excelVersionService->saveExcelVersion($request->all(), $alkesId)){
             return to_route('version.index', ['alkes_id' => $alkesId])->with('success', "Berhasil Menambahkan Versi Excel");
         }else{
             return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
@@ -66,8 +81,7 @@ class HomeController extends Controller
     }
 
     public function updateExcelVersion(Request $request, $alkesId, $versionId){
-        $is_success = $this->excelVersionService->updateExcelVersion($request->all(), $alkesId, $versionId);
-        if($is_success){
+        if($this->excelVersionService->updateExcelVersion($request->all(), $alkesId, $versionId)){
             return to_route('version.index', ['alkes_id' => $alkesId])->with('success', "Berhasil Menambahkan Versi Excel");
         }else{
             return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
@@ -80,153 +94,15 @@ class HomeController extends Controller
     }
 
     public function exportExcelVersion($alkesId, $versionId){
-        $version      = ExcelVersion::select('alkes_id', 'version_name')->find($versionId)->toArray();
-        $input_cells  = InputCell::select('cell', 'cell_name')->where('excel_version_id', $versionId)->get();
-        $output_cells = OutputCell::select('cell', 'cell_name')->where('excel_version_id', $versionId)->get();
-        
-        $test_schemas = [];
-        $schemes = TestSchema::where('excel_version_id', $versionId)->get();
-        foreach ($schemes as $scheme){
-            $schema = [
-                'name' => $scheme->name
-            ];
-            
-            $inputCellValues = [];
-            $input_cell_values = InputCellValue::with('input_cell')->where('test_schema_id', $scheme->id)->get();
-            
-            foreach($input_cell_values as $cell_value){
-                $inputCellValues[] = [
-                    "cell" => $cell_value->input_cell->cell,
-                    "value" => $cell_value->value
-                ];
-            }
-
-            $schema['input_cell_values'] = $inputCellValues;
-
-            $outputCellValues = [];
-            $output_cell_value = OutputCellValue::with('output_cell')->where('test_schema_id', $scheme->id)->get();
-            
-            foreach($output_cell_value as $cell_value){
-                $outputCellValues[] = [
-                    "cell" => $cell_value->output_cell->cell,
-                    "value" => $cell_value->expected_value
-                ];
-            }
-
-            $schema['output_cell_value'] = $outputCellValues;
-
-            $test_schemas[] = $schema;
-        }
-
-        $version['cell_input'] = $input_cells;
-        $version['cell_output'] = $output_cells;
-        $version['schema'] = $test_schemas;
-        
-        $jsonData = json_encode($version);
-
-        $alkes = Alkes::find($alkesId);
-        $filename = $alkes->name . " Versi " . $version['version_name'] . '.json';
-        header('Content-Type: application/json');
-        header("Content-Disposition: attachment; filename=$filename");
-
-        echo $jsonData;
-        exit;
+        $this->excelVersionService->exportExcelVersion($alkesId, $versionId);
     }
 
     public function importExcelVersion(ImportVersionRequest $request, $alkesId){
-        try{
-            DB::beginTransaction();
-
-            $request->file('json')->move(
-                public_path("temp"), 
-                "version.json"
-            );
-    
-            $fileContents = file_get_contents(public_path("temp/version.json"));
-            $data = json_decode($fileContents, true);
-
-            // Menyimpan Versi
-            $alkes_id = $data['alkes_id'];
-
-            $alkes = Alkes::find($alkes_id);
-            $version_name = $data['version_name'];
-    
-            $fileName = $alkes->excel_name . "-" . $version_name. ".xlsx";
-            $filePath = public_path("excel");
-
-            $request->file('excel')->move($filePath, $fileName);
-
-            $excel_version = ExcelVersion::create([
-                'alkes_id' => $alkes_id,
-                'version_name' => $version_name
-            ]);
-    
-            // Menyimpan Cell Input
-            $cell_inputs = $data['cell_input'];
-            foreach($cell_inputs as $cell_input){
-                InputCell::create([
-                    'cell' => $cell_input['cell'],
-                    'cell_name' => $cell_input['cell_name'],
-                    'excel_version_id' => $excel_version->id
-                ]);
-            }
-         
-            // Menyimpan Cell Output
-            $cell_outputs = $data['cell_output'];
-            foreach($cell_outputs as $cell_output){
-                OutputCell::create([
-                    'cell' => $cell_output['cell'],
-                    'excel_version_id' => $excel_version->id
-                ]);
-            }
-    
-            // Menyimpan Skema
-            $schemas = $data['schema'];
-            foreach($schemas as $schema){
-                $test_schema = TestSchema::create([
-                    'name' => $schema['name'],
-                    'excel_version_id' => $excel_version->id
-                ]);
-    
-                foreach($schema['input_cell_values'] as $input_cell){
-                    $cell_id = InputCell::where('excel_version_id', $excel_version->id)
-                                        ->where('cell', $input_cell['cell'])
-                                        ->first()->id;
-    
-                    InputCellValue::create([
-                        'input_cell_id' => $cell_id,
-                        'value' => $input_cell['value'],
-                        'test_schema_id' => $test_schema->id
-                    ]);
-                }
-    
-                foreach($schema['output_cell_value'] as $input_cell){
-                    $cell_id = OutputCell::where('excel_version_id', $excel_version->id)
-                                        ->where('cell', $input_cell['cell'])
-                                        ->first()->id;
-                    
-                    OutputCellValue::create([
-                        'output_cell_id' => $cell_id,
-                        'expected_value' => $input_cell['value'] ?? '',
-                        'actual_value' => '',
-                        'test_schema_id' => $test_schema->id,
-                        'is_verified' => false,
-                        'error_description' => '',
-                    ]);
-                }
-            }
-
-            DB::commit();
-            return to_route('version.index', ['alkes_id' => $alkes_id])->with('success', "Sukses Mengimport Versi Excel");
-        }catch(Exception $e){
-            DB::rollBack();
+        if($this->excelVersionService->exportExcelVersion($request->file('json'), $request->file('excel'))){
+            return to_route('version.index', ['alkes_id' => $alkesId])->with('success', "Sukses Mengimport Versi Excel");
+        }else{
             return back()->withInput()->with('error', 'Terjadi Kesalahan, Silahkan Coba Lagi!');
         }
-    }
-
-    public function trackingSchema($alkesId, $versionId){
-        $schemas = $this->testSchemaService->getTestSchemaByVersionId($versionId);
-        return view('schemas.index', compact('schemas', 'alkesId', 'versionId'));
     }
 
     public function editCellNameExcelVersion($alkesId, $versionId, $type){
@@ -235,99 +111,196 @@ class HomeController extends Controller
     }
 
     public function updateCellNameExcelVersion(Request $request, $alkesId, $versionId, $type){
-        $is_success = $this->excelVersionService->updateCellNameByVersionId($request->all(), $versionId, $type);
-        if($is_success){
+        if($this->excelVersionService->updateCellNameByVersionId($request->all(), $versionId, $type)){
             return to_route('version.index', ['alkes_id' => $alkesId])->with('success', "Berhasil Mengubah Nama Cell");
         }else{
             return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
         }
     }
 
-    public function createSimulation($alkesId, $versionId){
-        $inputCells = InputCell::where('excel_version_id', $versionId)->get();
-        $outputCells = OutputCell::where('excel_version_id', $versionId)->get();
-        return view('schemas.create', compact('versionId', 'alkesId', 'inputCells', 'outputCells'));
-    }
+    /* ============================== Calibrator Group ============================== */
 
-    public function duplicateSimulation($alkesId, $versionId, $schemaId){
-        $inputCells = InputCell::where('excel_version_id', $versionId)->get();
-        $outputCells = OutputCell::where('excel_version_id', $versionId)->get();
-        $inputCellValues = collect(InputCellValue::where('test_schema_id', $schemaId)->get());
-        $outputCellValues = collect(OutputCellValue::where('test_schema_id', $schemaId)->get());
-        $schema = TestSchema::find($schemaId);
-
-        return view('schemas.create', compact('versionId', 'alkesId', 'inputCells', 'outputCells', 'inputCellValues', 'outputCellValues', 'schema'));
-    }
-
-    public function storeSimulation(Request $request, $alkesId, $versionId){
-        $is_success = $this->testSchemaService->saveSimulation($request->all(), $versionId);
-        if($is_success){
-            return to_route('version.schema.index', [
-                'alkes_id' => $alkesId, 'version_id' => $versionId
-            ])->with('success', 'Berhasil Menambahkan Skema Simulasi');
+    public function calibratorGroupImport(Request $request, $alkesId, $versionId){
+        if($this->calibratorService->calibratorImport($request->file('calibrator_file'), $versionId)){
+            return to_route('version.calibrator-group.index', ['alkes_id' => $alkesId, 'version_id' => $versionId])->with('success', "Sukses Menambahkan Group Calibrator!");
         }else{
-            return back()->withInput()->with('error', 'Terjadi kesalahan, Silahkan Coba Lagi!');
+            return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
         }
     }
 
-    public function editSimulation($alkesId, $versionId, $schemaId){
+    public function calibratorGroupIndex($alkesId, $versionId){
+        $group_calibrators = GroupCalibrator::where('excel_version_id', $versionId)->orderBy('name')->get();
+        return view('calibrator.index', compact('alkesId', 'versionId', 'group_calibrators'));
+    }
+
+    public function calibratorGroupStore(Request $request, $alkesId, $versionId){
+        if($this->calibratorService->storeCalibratorGroup($request->name, $request->cell_id, $request->cell_lh ?? '', $versionId)){
+            return to_route('version.calibrator-group.index', ['alkes_id' => $alkesId, 'version_id' => $versionId])->with('success', "Sukses Menambahkan Group Calibrator!");
+        }else{
+            return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
+        }
+    }
+
+    public function calibratorGroupEdit($alkesId, $versionId, $group_id){
+        $group_calibrators = GroupCalibrator::where('excel_version_id', $versionId)->orderBy('name')->get();
+        $calibrator_group = GroupCalibrator::find($group_id);
+        return view('calibrator.index', compact('alkesId', 'versionId', 'group_calibrators', 'calibrator_group'));
+    }
+
+    public function calibratorGroupUpdate(Request $request, $alkesId, $versionId, $groupId){
+        if($this->calibratorService->storeCalibratorGroup($request->name, $request->cell_id, $request->cell_lh ?? '', $versionId, $groupId)){
+            return to_route('version.calibrator-group.index', ['alkes_id' => $alkesId, 'version_id' => $versionId])->with('success', "Sukses Mengubah Group Calibrator!");
+        }else{
+            return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
+        }
+    }
+
+    public function calibratorGroupExport($alkesId, $versionId, $group_id){
+        return $this->groupSimulationService->exportGroupCalibrator($group_id);
+    }
+
+    public function calibratorGroupDelete($alkesId, $versionId, $group_id){
+        if($this->groupSimulationService->delete($group_id)){
+            return to_route('version.calibrator-group.index', ['alkes_id' => $alkesId, 'version_id' => $versionId])->with('success', "Sukses Menghapus Group Calibrator!");
+        }else{
+            return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
+        }
+    }
+
+    /* ============================== Calibrator ============================== */
+
+    public function calibratorIndex($alkesId, $versionId, $groupId){
+        $calibrators = Calibrator::where('group_calibrator_id', $groupId)->orderBy('merk')->get();
+        return view('calibrator.calibrator', compact('alkesId', 'versionId', 'groupId', 'calibrators'));
+    }
+
+    public function calibratorStore(Request $request, $alkesId, $versionId, $groupId){
+        if($this->calibratorService->calibratorStore($request->name, $request->merk, $request->model_type, $request->model_type_name, $request->serial_number, $groupId)){
+            return to_route('version.calibrator-group.calibrator.index', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'group_id' => $groupId])->with('success', "Sukses Menambahkan Calibrator!");
+        }else{
+            return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
+        }
+    }
+
+    public function calibratorEdit($alkesId, $versionId, $groupId, $calibratorId){
+        $calibrator = Calibrator::find($calibratorId);
+        $calibrators = Calibrator::where('group_calibrator_id', $groupId)->orderBy('merk')->get();
+        return view('calibrator.calibrator', compact('alkesId', 'versionId', 'groupId', 'calibrators', 'calibrator'));
+    }
+
+    public function calibratorUpdate(Request $request, $alkesId, $versionId, $groupId, $calibratorId){
+        if($this->calibratorService->calibratorUpdate($calibratorId, $groupId, $request->name, $request->merk, $request->model_type, $request->model_type_name, $request->serial_number)){
+            return to_route('version.calibrator-group.calibrator.index', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'group_id' => $groupId])->with('success', "Sukses Mengubah Calibrator!");
+        }else{
+            return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
+        }
+    }
+
+    public function calibratorDelete($alkesId, $versionId, $groupId, $calibratorId){
+        try{
+            Calibrator::find($calibratorId)->delete();
+            return to_route('version.calibrator-group.calibrator.index', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'group_id' => $groupId])->with('success', "Sukses menghapus Calibrator!");
+        }catch(Exception $e){
+            return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
+        }
+    }
+
+    /* ============================== Group Simulasi ============================== */
+
+    public function trackingSchemaGroup($alkesId, $versionId){
+        $test_schema_groups = TestSchemaGroup::where('excel_version_id', $versionId)->get();
+        return view('schema_group.index', compact('test_schema_groups', 'alkesId', 'versionId'));
+    }
+
+    public function createSchemaGroup($alkesId, $versionId){
+        $inputCells = InputCell::where('excel_version_id', $versionId)->where('cell_name', "!=", "Cell Kalibrator")->orWhereNUll('cell_name')->get();
+        $inputCellValues = collect($this->excelVersionService->getInputCellValueWithRedTextInSheetByExcelversion($versionId));
+        $outputCells = OutputCell::where('excel_version_id', $versionId)->where('cell_name', "!=", "Cell Kalibrator")->orWhereNUll('cell_name')->get();
+
+        return view('schema_group.create', compact('versionId', 'alkesId', 'inputCells', 'outputCells', 'inputCellValues'));
+    }
+
+    public function storeSimulationGroup(Request $request, $alkesId, $versionId){
+        if($this->groupSimulationService->store($request->all(), $versionId)){
+            return to_route('version.schema_group.index', ['alkes_id' => $alkesId, 'version_id' => $versionId])->with('success', "Sukses Menambahkan Grup Simulasi");
+        }else{
+            return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
+        }
+    }
+
+    /* ============================== Simulasi ============================== */
+
+    public function trackingSchema($alkesId, $versionId, $groupId){
+        $schemas = $this->testSchemaService->getTestSchemaByGroupId($groupId);
+        return view('schemas.index', compact('schemas', 'alkesId', 'versionId', 'groupId'));
+    }
+
+    public function createSimulation($alkesId, $versionId){
         $inputCells = InputCell::where('excel_version_id', $versionId)->get();
+        $inputCellValues = collect($this->excelVersionService->getInputCellValueWithRedTextInSheetByExcelversion($versionId));
         $outputCells = OutputCell::where('excel_version_id', $versionId)->get();
-        $inputCellValues = collect(InputCellValue::where('test_schema_id', $schemaId)->get());
+
+        return view('schemas.create', compact('versionId', 'alkesId', 'inputCells', 'outputCells', 'inputCellValues'));
+    }
+
+    public function editSimulation($alkesId, $versionId, $groupId, $schemaId){
+        $outputCells = OutputCell::where('excel_version_id', $versionId)->where('cell_name', '!=', "Cell Kalibrator")->orWhereNUll('cell_name')->get();
         $outputCellValues = collect(OutputCellValue::where('test_schema_id', $schemaId)->get());
         $schema = TestSchema::find($schemaId);
 
-        return view('schemas.create', compact('versionId', 'alkesId', 'inputCells', 'outputCells', 'inputCellValues', 'outputCellValues', 'schema'));
+        return view('schemas.create', compact('versionId', 'alkesId', 'outputCells', 'outputCellValues', 'schema', 'groupId'));
     }
 
-    public function updateSimulation(Request $request, $alkesId, $versionId, $schemaId){
-        $is_success = $this->testSchemaService->updateSimulation($request->all(), $schemaId);
-        if($is_success){
-            return to_route('version.schema.index', [
-                'alkes_id' => $alkesId, 'version_id' => $versionId
+    public function updateSimulation(Request $request, $alkesId, $versionId, $groupId, $schemaId){
+        if($this->testSchemaService->updateSimulation($request->all(), $schemaId)){
+            return to_route('version.schema_group.schema.index', [
+                'alkes_id' => $alkesId, 'version_id' => $versionId, 'group_id' => $groupId
             ])->with('success', 'Berhasil Mengubah Skema Simulasi');
         }else{
             return back()->withInput()->with('error', 'Terjadi kesalahan, Silahkan Coba Lagi!');
         }
     }
 
-    public function allSimulation($alkesId, $versionId){
-        $simulations = TestSchema::where('excel_version_id', $versionId)->get();
+    public function allSimulation($alkesId, $versionId, $groupId){
+        $simulations = TestSchema::where('test_schema_group_id', $groupId)->get();
         foreach($simulations as $simulation){
             $this->testSchemaService->testSimulation($versionId, $simulation->id);
         }
 
-        return to_route('version.schema.index', [
+        return to_route('version.schema_group.schema.index', [
             'alkes_id' => $alkesId,
-            'version_id' => $versionId
+            'version_id' => $versionId,
+            'group_id' => $groupId
         ])->with("success", "Semua Simulasi Telah Dilakukan, Silahkan Lihat Hasil Pada Halaman Detail Skema Simulasi!");
     }
 
-    public function detailSimulation($alkesId, $versionId, $schemaId){
+    public function detailSimulation($alkesId, $versionId, $groupId, $schemaId){
         $input_cell_value = $this->testSchemaService->getInputCellValueBySchemaId($schemaId);
         $output_cell_value = $this->testSchemaService->getOutputCellValueBySchemaId($schemaId);
 
-        return view('schemas.detail', compact('alkesId', 'versionId', 'schemaId', 'input_cell_value', 'output_cell_value'));
+        return view('schemas.detail', compact('alkesId', 'versionId', 'schemaId', 'input_cell_value', 'output_cell_value', 'groupId'));
     }
 
-    public function schemaSimulation($alkesId, $versionId, $schemaId){
+    public function schemaSimulation($alkesId, $versionId, $groupId, $schemaId){
         $this->testSchemaService->testSimulation($versionId, $schemaId);
-        return to_route('version.schema.index', [
+        return to_route('version.schema_group.schema.index', [
             'alkes_id' => $alkesId,
-            'version_id' => $versionId
+            'version_id' => $versionId,
+            'group_id' => $groupId
         ])->with("success", "Simulasi Telah Dilakukan, Silahkan Lihat Hasil Pada Halaman Detail Skema Simulasi!");
     }
 
-    public function detailschemaSimulation($alkesId, $versionId, $schemaId){
+    public function detailschemaSimulation($alkesId, $versionId, $schemaId, $groupId){
         $this->testSchemaService->testSimulation($versionId, $schemaId);
-        return to_route('version.schema.detail-simulation', [
+        return to_route('version.schema_group.schema.detail-simulation', [
             'alkes_id' => $alkesId,
             'version_id' => $versionId,
-            'schema_id' => $schemaId
+            'schema_id' => $schemaId,
+            'group_id' => $groupId,
         ])->with("success", "Simulasi Telah Dilakukan!");
     }
 
-    public function cellTracker(Request $request, $alkesId, $versionId, $schemaId){
+    public function cellTracker(Request $request, $alkesId, $versionId, $schemaId, $groupId){
         $selected_sheet = [];
         if($request->all()){
             $data = $request->except('_token');
@@ -340,6 +313,6 @@ class HomeController extends Controller
         $excel_values = $this->excelService->getExcelCellValue($versionId, $schemaId, $selected_sheet);
         $error_result_cells = $this->excelService->getErrorCellInResultSheet($schemaId);
 
-        return view('cell_trackers.index', compact('excel_values', 'alkesId', 'versionId', 'schemaId', 'error_result_cells', 'sheet_names', 'selected_sheet'));
+        return view('cell_trackers.index', compact('excel_values', 'alkesId', 'versionId', 'schemaId', 'error_result_cells', 'sheet_names', 'selected_sheet', 'groupId'));
     }
 }

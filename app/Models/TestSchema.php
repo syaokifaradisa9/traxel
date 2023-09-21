@@ -10,9 +10,13 @@ class TestSchema extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'excel_version_id',
+        'test_schema_group_id',
         'name'
     ];
+
+    public function test_schema_group(){
+        return $this->belongsTo(TestSchemaGroup::class);
+    }
 
     protected $appends = [
         'percentage',
