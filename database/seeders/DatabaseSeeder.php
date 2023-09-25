@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Database\Seeders\AlkesSeeder;
+use Database\Seeders\InputCellSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,7 +18,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            AlkesSeeder::class
+            AlkesSeeder::class,
+            InputCellSeeder::class
         ]);
     }
 }
