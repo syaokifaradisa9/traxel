@@ -343,7 +343,11 @@ class AlkesSeeder extends Seeder
                 'id' => 83,
                 'name' => 'Resusitasi paru',
                 "excel_name" => "Resusitasi_Paru"
-            ],
+            ],[
+                "id" => 84,
+                "name" => 'Electrical Safety Analyzer',
+                'excel_name' => "Electrical_Safety_Analyzer"
+            ]
         ];
 
         foreach($alkes as $data){
