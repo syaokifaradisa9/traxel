@@ -18,7 +18,7 @@
     
     <div class="card">
         <div class="card-body">
-           <form action="{{ isset($calibrator) ? route('version.calibrator-group.calibrator.update', [
+           <form action="{{ $isEdit ?? false ? route('version.calibrator-group.calibrator.update', [
                 'alkes_id' => $alkesId, 
                 'version_id' => $versionId, 
                 'group_id' => $groupId,
@@ -29,7 +29,7 @@
                 'group_id' => $groupId
             ]) }}" method="post">
                 @csrf
-                @if(isset($calibrator))
+                @if($isEdit ?? false)
                     @method('PUT')
                 @endif
 
@@ -60,7 +60,7 @@
                     </div>
                 </div>
                 <button class="btn btn-primary w-100" type="submit">
-                    @if(isset($calibrator_group))
+                    @if($isEdit ?? false)
                         Ubah
                     @else
                         Simpan
@@ -95,6 +95,10 @@
                             </td>
                             <td class="text-center align-middle">
                                 <div class="row mx-0 px-0">
+                                    <a href="{{ route('version.calibrator-group.calibrator.duplicate', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'group_id' => $groupId, 'id' => $value->id]) }}" class="btn btn-primary col">
+                                        <i class="fas fa-copy"></i>
+                                        Duplikat
+                                    </a>
                                     <a href="{{ route('version.calibrator-group.calibrator.edit', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'group_id' => $groupId, 'id' => $value->id]) }}" class="btn btn-warning col">
                                         <i class="fas fa-edit"></i>
                                         Edit Kalibrator

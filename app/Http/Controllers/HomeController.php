@@ -70,29 +70,6 @@ class HomeController extends Controller
         }
     }
 
-    public function editExcelVersion($alkesId, $versionId){
-        $version = ExcelVersion::with('input_cell', 'output_cell')->find($versionId);
-
-        $cells = $this->excelVersionService->getInputAndOutputCells($versionId);
-        $input_cells = $cells['input'];
-        $output_cells = $cells['output'];
-
-        return view('excel_version.create', compact('alkesId', 'version', 'input_cells', 'output_cells'));
-    }
-
-    public function updateExcelVersion(Request $request, $alkesId, $versionId){
-        if($this->excelVersionService->updateExcelVersion($request->all(), $alkesId, $versionId)){
-            return to_route('version.index', ['alkes_id' => $alkesId])->with('success', "Berhasil Menambahkan Versi Excel");
-        }else{
-            return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
-        }
-    }
-
-    public function deleteExcelVersion($alkesId, $versionId){
-        $this->excelVersionService->deleteExcelVersion($versionId);
-        return to_route('version.index', ['alkes_id' => $alkesId]);
-    }
-
     public function exportExcelVersion($alkesId, $versionId){
         $this->excelVersionService->exportExcelVersion($alkesId, $versionId);
     }
@@ -144,11 +121,12 @@ class HomeController extends Controller
     public function calibratorGroupEdit($alkesId, $versionId, $group_id){
         $group_calibrators = GroupCalibrator::where('excel_version_id', $versionId)->orderBy('name')->get();
         $calibrator_group = GroupCalibrator::find($group_id);
-        return view('calibrator.index', compact('alkesId', 'versionId', 'group_calibrators', 'calibrator_group'));
+        $isEdit = true;
+        return view('calibrator.index', compact('alkesId', 'versionId', 'group_calibrators', 'calibrator_group', 'isEdit'));
     }
 
     public function calibratorGroupUpdate(Request $request, $alkesId, $versionId, $groupId){
-        if($this->calibratorService->storeCalibratorGroup($request->name, $request->cell_id, $request->cell_lh ?? '', $versionId, $groupId)){
+        if($this->calibratorService->updateCalibratorGroup($request->name, $request->cell_id, $request->cell_lh ?? '', $versionId, $groupId)){
             return to_route('version.calibrator-group.index', ['alkes_id' => $alkesId, 'version_id' => $versionId])->with('success', "Sukses Mengubah Group Calibrator!");
         }else{
             return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
@@ -185,6 +163,13 @@ class HomeController extends Controller
     public function calibratorEdit($alkesId, $versionId, $groupId, $calibratorId){
         $calibrator = Calibrator::find($calibratorId);
         $calibrators = Calibrator::where('group_calibrator_id', $groupId)->orderBy('merk')->get();
+        $isEdit = true;
+        return view('calibrator.calibrator', compact('alkesId', 'versionId', 'groupId', 'calibrators', 'calibrator', 'isEdit'));
+    }
+
+    public function calibratorDuplicate($alkesId, $versionId, $groupId, $calibratorId){
+        $calibrator = Calibrator::find($calibratorId);
+        $calibrators = Calibrator::where('group_calibrator_id', $groupId)->orderBy('merk')->get();
         return view('calibrator.calibrator', compact('alkesId', 'versionId', 'groupId', 'calibrators', 'calibrator'));
     }
 
@@ -213,9 +198,15 @@ class HomeController extends Controller
     }
 
     public function createSchemaGroup($alkesId, $versionId){
-        $inputCells = InputCell::where('excel_version_id', $versionId)->where('cell_name', "!=", "Cell Kalibrator")->orWhereNUll('cell_name')->get();
+        $inputCells = InputCell::where('excel_version_id', $versionId)->where(function($q){
+            $q->where('cell_name', "!=", "Cell Kalibrator");
+            $q->orWhereNUll('cell_name');
+        })->get();
         $inputCellValues = collect($this->excelVersionService->getInputCellValueWithRedTextInSheetByExcelversion($versionId));
-        $outputCells = OutputCell::where('excel_version_id', $versionId)->where('cell_name', "!=", "Cell Kalibrator")->orWhereNUll('cell_name')->get();
+        $outputCells = OutputCell::where('excel_version_id', $versionId)->where(function($q){
+            $q->where('cell_name', "!=", "Cell Kalibrator");
+            $q->orWhereNUll('cell_name');
+        })->get();
 
         return view('schema_group.create', compact('versionId', 'alkesId', 'inputCells', 'outputCells', 'inputCellValues'));
     }

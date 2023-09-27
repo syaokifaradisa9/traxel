@@ -53,6 +53,7 @@ Route::middleware('auth')->group(function(){
                                 Route::get('/', 'calibratorIndex')->name('index');
                                 Route::post('/', 'calibratorStore')->name('store');
                                 Route::prefix("{id}")->group(function(){
+                                    Route::get('duplicate', 'calibratorDuplicate')->name('duplicate');
                                     Route::get('edit', 'calibratorEdit')->name('edit');
                                     Route::put('update', 'calibratorUpdate')->name('update');
                                     Route::get('delete', 'calibratorDelete')->name('delete');

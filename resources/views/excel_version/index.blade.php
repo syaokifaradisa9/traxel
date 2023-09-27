@@ -64,6 +64,11 @@
                                         }else{
                                             $input_cells_str = $input_cells_str . ", " . $input_cell->cell;
                                         }
+
+                                        if($index == 50){
+                                            $input_cells_str = $input_cells_str . ", ....";
+                                            break;
+                                        }
                                     }
                                 @endphp
                                 <a href="{{ route('version.set-cell-name', ['alkes_id' => $alkesId, 'version_id' => $value->id, "type" => "input"]) }}">
@@ -79,6 +84,11 @@
                                         }else{
                                             $output_cell_str = $output_cell_str . ", " . $output_cell->cell;
                                         }
+
+                                        if($index == 50){
+                                            $output_cell_str = $output_cell_str . ", ....";
+                                            break;
+                                        }
                                     }
                                 @endphp
                                 <a href="{{ route('version.set-cell-name', ['alkes_id' => $alkesId, 'version_id' => $value->id, "type" => "output"]) }}">
@@ -93,14 +103,6 @@
                                 <a href="{{ route("version.schema_group.index", ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-primary w-100">
                                     <i class="fas fa-exclamation-circle mr-1"></i>
                                     Group Tracking
-                                </a>
-                                <a href="{{ route('version.edit', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-warning w-100">
-                                    <i class="fas fa-edit mr-1"></i>
-                                    Edit Versi
-                                </a>
-                                <a href="{{ route('version.delete', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-danger btn-delete w-100">
-                                    <i class="fas fa-trash-alt mr-1"></i>
-                                    Hapus
                                 </a>
                                 {{-- <a href="{{ route('version.export', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-danger btn-info w-100">
                                     <i class="fas fa-file-export mr-1"></i>

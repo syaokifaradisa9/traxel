@@ -48,12 +48,7 @@
                 <div class="row">
                     @foreach ($inputCells as $inputCell)
                         @php
-                            if(isset($inputCellValues)){
-                                $value = $inputCellValues->where('cell', $inputCell->cell)->first()['value'];
-                            }else{
-                                $value = '';
-                            }
-
+                            $value = $inputCellValues->where('cell', $inputCell->cell)->first()['value'] ?? '';
                             $form_name = "input-".$inputCell->id;
                         @endphp
                         <div class="form-group col-3">
