@@ -3,18 +3,28 @@
 namespace App\Services;
 
 use Exception;
+use TypeError;
+use DivisionByZeroError;
 use App\Models\InputCell;
 use App\Models\Calibrator;
 use App\Models\OutputCell;
 use App\Models\TestSchema;
 use App\Models\ExcelVersion;
 use App\Models\InputCellValue;
+use App\Services\ExcelService;
 use App\Models\GroupCalibrator;
 use App\Models\OutputCellValue;
 use App\Models\TestSchemaGroup;
 use Illuminate\Support\Facades\DB;
 
 class GroupSimulationService{
+    private $excelService;
+    private $testSchemaService;
+    public function __construct(ExcelService $excelService, TestSchemaService $testSchemaService){
+        $this->excelService = $excelService;
+        $this->testSchemaService = $testSchemaService;
+    }
+
     private function generateCombinations($group_calibrator, $currentCombination, &$allCombinations) {
         if (count($group_calibrator) == 0) {
             $allCombinations[] = $currentCombination;
@@ -31,6 +41,8 @@ class GroupSimulationService{
     }
     
     public function store($data, $versionId){
+        $outputCells = OutputCell::whereExcelVersionId($versionId)->get();
+
         try{
             DB::beginTransaction();
 
@@ -115,21 +127,11 @@ class GroupSimulationService{
         
                 // Memasukkan Nilai Input dan Output Per Simulasi
                 foreach($data as $key => $value){
-
                     if(str_contains($key, "input")){
                         $input_cell_id = str_replace("input-", "", $key);
                         InputCellValue::create([
                             'input_cell_id' => $input_cell_id,
                             'value' => $value,
-                            'test_schema_id' => $testSchema->id,
-                        ]);
-                    }
-    
-                    if(str_contains($key, "output")){
-                        $output_cell_id = str_replace("output-", "", $key);
-                        OutputCellValue::create([
-                            'output_cell_id' => $output_cell_id,
-                            'expected_value' => $value ?? '',
                             'test_schema_id' => $testSchema->id,
                         ]);
                     }
@@ -157,6 +159,38 @@ class GroupSimulationService{
                         ]);
                     }
                 }
+
+                // Pengisian Output
+                $excelversion = ExcelVersion::find($versionId);
+                $inpuCellValues = InputCellValue::whereTestSchemaId($testSchema->id)->get();
+
+                $excel = $this->excelService->getCalculateExcelValue(
+                    public_path("excel\\{$excelversion->alkes->excel_name}-{$excelversion->version_name}.xlsx"),
+                    $inpuCellValues,
+                    "LH"
+                );
+
+                foreach ($outputCells as $outputCell){
+                    $expectedValue = '';
+
+                    try{
+                        $expectedValue = $excel->getCell($outputCell->cell)->getFormattedValue();
+                    }catch (DivisionByZeroError $e) { 
+                    }catch(Exception $e){
+                    }catch(TypeError $e){
+                    }
+
+                    OutputCellValue::create([
+                        'output_cell_id' => $outputCell->id,
+                        'expected_value' => $expectedValue,
+                        'actual_value' => '',
+                        'test_schema_id' => $testSchema->id,
+                        'is_verified' => false,
+                        'error_description' => "",
+                    ]);
+                }
+
+                $this->testSchemaService->testSimulation($versionId, $testSchema->id);
             }
 
             DB::commit();

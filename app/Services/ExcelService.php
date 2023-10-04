@@ -92,7 +92,7 @@ class ExcelService{
                     for ($column = 1; $column <= $highestColumnIndex; $column++) {
                         try{
                             $cell = Coordinate::stringFromColumnIndex($column) . $row;
-                            $value = $sheet->getCell($cell)->getCalculatedValue();
+                            $value = $sheet->getCell($cell)->getFormattedValue();
                         
                             if(!in_array(strtolower(trim($value)), $skip_values)){
                                 $inner_excel_values[] = [

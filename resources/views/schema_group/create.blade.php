@@ -61,31 +61,6 @@
         </div>
 
         <div class="card">
-            <div class="card-header row">
-                <h4>Ekspektasi Output Data</h4>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    @foreach ($outputCells as $outputCell)
-                        @php
-                            if(isset($outputCellValues)){
-                                $value = $outputCellValues->where('output_cell_id', $outputCell->id)->first()->expected_value;
-                            }else{
-                                $value = '';
-                            }
-
-                            $form_name = "output-".$outputCell->id;
-                        @endphp
-                        <div class="form-group col-3">
-                            <label><b>{{ $outputCell->cell_name . " (" . $outputCell->cell . ")" }}</b></label>
-                            <input name="{{ $form_name }}" type="text" class="form-control" placeholder="Nilai Excel Cell {{ $outputCell->cell }}" value="{{ old($form_name) ?? $value }}">
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
             <button class="btn btn-primary w-100" type="submit">
                 <i class="fas fa-save mr-1"></i>
                 Simpan Simulasi

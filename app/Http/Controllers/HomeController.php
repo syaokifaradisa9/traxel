@@ -203,12 +203,8 @@ class HomeController extends Controller
             $q->orWhereNUll('cell_name');
         })->get();
         $inputCellValues = collect($this->excelVersionService->getInputCellValueWithRedTextInSheetByExcelversion($versionId));
-        $outputCells = OutputCell::where('excel_version_id', $versionId)->where(function($q){
-            $q->where('cell_name', "!=", "Cell Kalibrator");
-            $q->orWhereNUll('cell_name');
-        })->get();
 
-        return view('schema_group.create', compact('versionId', 'alkesId', 'inputCells', 'outputCells', 'inputCellValues'));
+        return view('schema_group.create', compact('versionId', 'alkesId', 'inputCells', 'inputCellValues'));
     }
 
     public function storeSimulationGroup(Request $request, $alkesId, $versionId){
@@ -235,7 +231,10 @@ class HomeController extends Controller
     }
 
     public function editSimulation($alkesId, $versionId, $groupId, $schemaId){
-        $outputCells = OutputCell::where('excel_version_id', $versionId)->where('cell_name', '!=', "Cell Kalibrator")->orWhereNUll('cell_name')->get();
+        $outputCells = OutputCell::where('excel_version_id', $versionId)->where(function($q){
+            $q->where('cell_name', "!=", "Cell Kalibrator");
+            $q->orWhereNUll('cell_name');
+        })->get();
         $outputCellValues = collect(OutputCellValue::where('test_schema_id', $schemaId)->get());
         $schema = TestSchema::find($schemaId);
 

@@ -50,7 +50,7 @@ class TestSchemaService{
                     $output_value->error_description = "";
                 }else{
                     $output_value->is_verified = false;
-                    $output_value->error_description = "Nilai Ekspektasi Tidak sama Dengan Nilai Aktual";
+                    $output_value->error_description = "Nilai Aktual Tidak sama Dengan Nilai Ekspektasi";
                 }
             }catch (DivisionByZeroError $e) {
                 $output_value->actual_value = "#DIV/0";
@@ -136,7 +136,6 @@ class TestSchemaService{
             return true;
         }catch(Exception $e){
             DB::rollBack();
-            dd($e);
             return false;
         }
     }
