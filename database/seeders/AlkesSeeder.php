@@ -347,6 +347,14 @@ class AlkesSeeder extends Seeder
                 "id" => 84,
                 "name" => 'Electrical Safety Analyzer',
                 'excel_name' => "Electrical_Safety_Analyzer"
+            ],[
+                "id" => 85,
+                "name" => "Otoscope",
+                "excel_name" => "Otoscope"
+            ],[
+                "id" => 86,
+                "name" => "Laryngoscope",
+                "excel_name" => "Laryngoscope"
             ]
         ];
 
