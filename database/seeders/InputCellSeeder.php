@@ -9149,7 +9149,7 @@ class InputCellSeeder extends Seeder
             $alkes_id = $excel['alkes_id'];
             $excel_version = ExcelVersion::create([
                 'alkes_id' => $alkes_id,
-                'version_name' => ($excel['version_name'] ?? '') . '25-09-23'
+                'version_name' => ($excel['version_name'] ?? '') . '01-10-23'
             ]);
 
             foreach ($excel['input_cells'] as $cell){

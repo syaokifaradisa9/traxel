@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Alkes;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class AlkesSeeder extends Seeder
 {
@@ -26,11 +25,11 @@ class AlkesSeeder extends Seeder
             ],[
                 'id' => 4,
                 'name' => 'Audiometer', 
-                'excel_name' => 'audiometer',
+                'excel_name' => 'Audiometer',
             ],[
                 'id' => 5,
                 'name' => 'Autoclave',
-                'excel_name' => 'autoclave',
+                'excel_name' => 'Autoclave',
             ],[
                 'id' => 6,
                 'name' => 'Baby Incubator / Inkubator Perawatan', 
@@ -42,7 +41,7 @@ class AlkesSeeder extends Seeder
             ],[
                 'id' => 8,
                 'name' => 'Blood Bank', 
-                'excel_name' => 'blood_bank',
+                'excel_name' => 'Blood_bank',
             ],[
                 'id' => 9,
                 'name' => 'Tensimeter Digital / Blood Pressure Monitor (BPM)', 
