@@ -77,22 +77,11 @@
             <div class="card-body">
                 <div class="row">
                     <div class="form-group col">
-                        <label for=""><b>File Excel</b></label>
-                        <input name="excel" type="file" class="form-control @error('excel')
+                        <label for=""><b>File Import</b></label>
+                        <input name="file_import" type="file" class="form-control @error('file_import')
                             is-invalid
                         @enderror">
-                        @error('excel')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-                    <div class="form-group col">
-                        <label for=""><b>File JSON</b></label>
-                        <input name="json" type="file" class="form-control @error('json')
-                            is-invalid
-                        @enderror">
-                        @error('json')
+                        @error('file_import')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>

@@ -104,10 +104,10 @@
                                     <i class="fas fa-exclamation-circle mr-1"></i>
                                     Group Tracking
                                 </a>
-                                {{-- <a href="{{ route('version.export', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-danger btn-info w-100">
+                                <a href="{{ route('version.export', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-danger btn-info w-100">
                                     <i class="fas fa-file-export mr-1"></i>
                                     Export
-                                </a> --}}
+                                </a>
                             </td>
                         </tr>
                     @endforeach

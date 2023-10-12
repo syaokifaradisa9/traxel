@@ -14,18 +14,24 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table-sm table-striped w-100" id="order-table">
-                  <thead>
+                    <thead>
                     <tr>
-                      <th class="text-center" style="width: 50px">No.</th>
-                      <th class="text-center">Jumlah<br>Versi</th>
-                      <th class="text-center">Alat Kesehatan</th>
-                      <th class="text-center" style="width: 200px">Aksi</th>
+                        <th class="text-center" style="width: 50px">No.</th>
+                        <th class="text-center">Jumlah<br>Versi</th>
+                        <th class="text-center">Alat Kesehatan</th>
+                        <th class="text-center" style="width: 200px">Aksi</th>
                     </tr>
-                  </thead>
-                  <tbody>
+                    </thead>
+                    <tbody>
+                    @php
+                        $excels = '';
+                    @endphp
                     @foreach ($alkes as $index => $value)
                         @php
                             $version_count = count($value->version);
+                            if($version_count == 0){
+                                $excels .= $value->name.", ";
+                            }
                         @endphp
                         <tr>
                             <td class="text-center" @if(!$version_count) text-danger @endif>{{ $index + 1 }}</td>
@@ -43,9 +49,12 @@
                             </td>
                         </tr>
                     @endforeach
-                  </tbody>
+                    </tbody>
                 </table>
-              </div>
+            </div>
+            <p>
+                {{ $excels }}
+            </p>
         </div>
     </div>
 @endsection

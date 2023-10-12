@@ -22,17 +22,15 @@ class ImportVersionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'json' => 'required|file',
-            'excel' => 'required|file'
+            'file_import' => 'required|file|mimes:zip'
         ];
     }
 
     public function messages(){
         return [
-            'json.required' => 'Mohon Pilih File Import!',
-            'json.file' => 'Mohon Pilih Berupa File!',
-            'excel.required' => 'Mohon Pilih File Excel!',
-            'excel.file' => 'Mohon Pilih Berupa File!',
+            'file_import.required' => 'Mohon Pilih File Import!',
+            'file_import.file' => "Mohon Pilih Berupa File!",
+            'file_import.mimes' => "Mohon Pilih File Import Berupa ZIP!"
         ];
     }
 }

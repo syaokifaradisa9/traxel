@@ -3,14 +3,19 @@
 namespace App\Services;
 
 use Exception;
+use ZipArchive;
 use App\Models\Alkes;
+use App\Models\Calibrator;
 use App\Models\InputCell;
 use App\Models\OutputCell;
 use App\Models\TestSchema;
 use App\Models\ExcelVersion;
+use App\Models\GroupCalibrator;
 use App\Models\InputCellValue;
 use App\Models\OutputCellValue;
+use App\Models\TestSchemaGroup;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
@@ -112,6 +117,8 @@ class ExcelVersionService{
     
             $cell_inputs = $this->getCellWithRedTextInSheet($filePath . "/" . $fileName, "ID");
             $cell_outputs = $this->getCellWithRedTextInSheet($filePath . "/" . $fileName, "LH");
+
+            dd($alkesId, implode('", "', $cell_inputs), implode('", "', $cell_outputs));
 
             $version = ExcelVersion::create([
                 'version_name' => $data['version_name'],
@@ -269,7 +276,6 @@ class ExcelVersionService{
             return true;
         }catch(Exception $e){
             DB::rollBack();
-            dd($e);
             return false;
         }
     }
@@ -300,81 +306,150 @@ class ExcelVersionService{
     }
 
     public function exportExcelVersion($alkesId, $versionId){
-        $version      = ExcelVersion::select('alkes_id', 'version_name')->find($versionId)->toArray();
+        $version      = ExcelVersion::with('group_calibrator')->find($versionId);
         $input_cells  = InputCell::select('cell', 'cell_name')->where('excel_version_id', $versionId)->get();
         $output_cells = OutputCell::select('cell', 'cell_name')->where('excel_version_id', $versionId)->get();
         
-        $test_schemas = [];
-        $schemes = TestSchema::where('excel_version_id', $versionId)->get();
-        foreach ($schemes as $scheme){
-            $schema = [
-                'name' => $scheme->name
+        $group_test_schemas = [];
+        $groupSchemes = TestSchemaGroup::where('excel_version_id', $versionId)->get();
+        foreach ($groupSchemes as $groupScheme){
+            $groupSchema = [
+                "name" => $groupScheme->name
             ];
-            
-            $inputCellValues = [];
-            $input_cell_values = InputCellValue::with('input_cell')->where('test_schema_id', $scheme->id)->get();
-            
-            foreach($input_cell_values as $cell_value){
-                $inputCellValues[] = [
-                    "cell" => $cell_value->input_cell->cell,
-                    "value" => $cell_value->value
+            foreach($groupScheme->test_schema as $test_schema){
+                $schema = [
+                    'name' => $test_schema->name
                 ];
+
+                $inputCellValues = [];
+                $input_cell_values = InputCellValue::with('input_cell')->where('test_schema_id', $test_schema->id)->get();
+                
+                foreach($input_cell_values as $cell_value){
+                    $inputCellValues[] = [
+                        "cell" => $cell_value->input_cell->cell,
+                        "value" => $cell_value->value
+                    ];
+                }
+
+                $schema['input_cell_values'] = $inputCellValues;
+
+                $outputCellValues = [];
+                $output_cell_value = OutputCellValue::with('output_cell')->where('test_schema_id', $test_schema->id)->get();
+                
+                foreach($output_cell_value as $cell_value){
+                    $outputCellValues[] = [
+                        "cell" => $cell_value->output_cell->cell,
+                        "value" => $cell_value->expected_value
+                    ];
+                }
+
+                $schema['output_cell_value'] = $outputCellValues;
+                $groupSchema["schema"][] = $schema;
             }
 
-            $schema['input_cell_values'] = $inputCellValues;
-
-            $outputCellValues = [];
-            $output_cell_value = OutputCellValue::with('output_cell')->where('test_schema_id', $scheme->id)->get();
-            
-            foreach($output_cell_value as $cell_value){
-                $outputCellValues[] = [
-                    "cell" => $cell_value->output_cell->cell,
-                    "value" => $cell_value->expected_value
-                ];
-            }
-
-            $schema['output_cell_value'] = $outputCellValues;
-
-            $test_schemas[] = $schema;
+            $group_test_schemas[] = $groupSchema;
         }
 
-        $version['cell_input'] = $input_cells;
-        $version['cell_output'] = $output_cells;
-        $version['schema'] = $test_schemas;
+        $groupCalibrators = [];
+        foreach($version->group_calibrator as $groupCalibrator){
+            $group_calibrator = [
+                "name" => $groupCalibrator->name,
+                'cell_ID' => $groupCalibrator->cell_ID,
+                'cell_LH' => $groupCalibrator->cell_LH
+            ];
+            foreach($groupCalibrator->calibrator as $calibrator){
+                $group_calibrator['calibrator'][] = [
+                    "name" => $calibrator->name,
+                    "merk" => $calibrator->merk,
+                    'model_type' => $calibrator->model_type,
+                    'model_type_name' => $calibrator->model_type_name,
+                    'serial_number' => $calibrator->serial_number,
+                ];
+            }
+
+            $groupCalibrators[] = $group_calibrator;
+        }
+
+        $version_json = [];
+
+        $version_json['alkes_id'] = $version->alkes_id;
+        $version_json['name'] = $version->version_name;
+        $version_json['calibrator'] = $groupCalibrators;
+        $version_json['cell_input'] = $input_cells;
+        $version_json['cell_output'] = $output_cells;
+        $version_json['schema_group'] = $group_test_schemas;
         
-        $jsonData = json_encode($version);
-
         $alkes = Alkes::find($alkesId);
-        $filename = $alkes->name . " Versi " . $version['version_name'] . '.json';
-        header('Content-Type: application/json');
-        header("Content-Disposition: attachment; filename=$filename");
+        
+        $jsonData = json_encode($version_json);
+        
+        // Simpan JSON dalam file temporary
+        $jsonFilename = $alkes->name . " Versi " . $version->version_name . '.json';
+        $jsonTempFile = tempnam(sys_get_temp_dir(), 'json_export');
+        file_put_contents($jsonTempFile, $jsonData);
 
-        echo $jsonData;
-        exit;
+        // Buat objek ZipArchive
+        $zip = new ZipArchive();
+        $zipFilename = public_path("excel/" . $alkes->excel_name . "-" . $version->version_name . ".zip");
+
+        if ($zip->open($zipFilename, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+            // Tambahkan file JSON ke dalam zip
+            $zip->addFile($jsonTempFile, $jsonFilename);
+
+            // Tambahkan file lainnya dari direktori public
+            $excelPath = public_path("excel/" . $alkes->excel_name . "-" . $version->version_name.".xlsx");
+            $zip->addFile($excelPath, $alkes->excel_name . "-" . $version->version_name.".xlsx");
+
+            // Tutup zip
+            $zip->close();
+
+            // Hapus file temporary JSON
+            unlink($jsonTempFile);
+
+            // Set header untuk mengirim zip
+            header('Content-Type: application/zip');
+            header("Content-Disposition: attachment; filename=" . basename($zipFilename));
+
+            // Keluarkan isi zip
+            readfile($zipFilename);
+            exit;
+        } else {
+            // Gagal membuka zip, berikan respon yang sesuai
+            echo "Gagal membuat file ZIP.";
+        }
     }
 
     public function importExcelVersion($file){
         try{
             DB::beginTransaction();
 
+            File::cleanDirectory(public_path("temp"));
+            $zip = new ZipArchive();
+
             $file->move(
                 public_path("temp"), 
-                "version.json"
+                "zipper.zip"
             );
-    
-            $fileContents = file_get_contents(public_path("temp/version.json"));
-            $data = json_decode($fileContents, true);
+
+            if($zip->open(public_path("temp/zipper.zip"))){
+                $zip->extractTo(public_path("temp/"));
+            }
+
+            $data = '';
+            $files = File::allFiles(public_path("temp"));
+            foreach($files as $file){
+                if($file->getExtension() == "json"){
+                    $fileContents = file_get_contents(public_path("temp/" . $file->getRelativePathname()));
+                    $data = json_decode($fileContents, true);
+                }else if($file->getExtension() == "xls" || $file->getExtension() == "xlsx"){
+                    File::copy(public_path("temp/" . $file->getRelativePathname()), public_path("excel/" . $file->getRelativePathname()));
+                }
+            }
 
             // Menyimpan Versi
             $alkes_id = $data['alkes_id'];
 
-            $alkes = Alkes::find($alkes_id);
-            $version_name = $data['version_name'];
-    
-            $fileName = $alkes->excel_name . "-" . $version_name. ".xlsx";
-            $filePath = public_path("excel");
-
-            $file->move($filePath, $fileName);
+            $version_name = $data['name'];
 
             $excel_version = ExcelVersion::create([
                 'alkes_id' => $alkes_id,
@@ -400,39 +475,65 @@ class ExcelVersionService{
                 ]);
             }
     
-            // Menyimpan Skema
-            $schemas = $data['schema'];
-            foreach($schemas as $schema){
-                $test_schema = TestSchema::create([
-                    'name' => $schema['name'],
+            foreach($data['calibrator'] as $groupCalibrator){
+                $group_calibrator = GroupCalibrator::create([
+                    'name' => $groupCalibrator['name'],
+                    'cell_ID' => $groupCalibrator['cell_ID'],
+                    'cell_LH' => $groupCalibrator['cell_LH'],
                     'excel_version_id' => $excel_version->id
                 ]);
-    
-                foreach($schema['input_cell_values'] as $input_cell){
-                    $cell_id = InputCell::where('excel_version_id', $excel_version->id)
-                                        ->where('cell', $input_cell['cell'])
-                                        ->first()->id;
-    
-                    InputCellValue::create([
-                        'input_cell_id' => $cell_id,
-                        'value' => $input_cell['value'],
-                        'test_schema_id' => $test_schema->id
+
+                foreach($groupCalibrator['calibrator'] as $calibrator){
+                    Calibrator::create([
+                        'name' => $calibrator['name'],
+                        'merk' => $calibrator['merk'],
+                        'model_type' => $calibrator['model_type'],
+                        'model_type_name' => $calibrator['model_type_name'],
+                        'serial_number' => $calibrator['serial_number'],
+                        'group_calibrator_id' => $group_calibrator->id
                     ]);
                 }
-    
-                foreach($schema['output_cell_value'] as $input_cell){
-                    $cell_id = OutputCell::where('excel_version_id', $excel_version->id)
-                                        ->where('cell', $input_cell['cell'])
-                                        ->first()->id;
-                    
-                    OutputCellValue::create([
-                        'output_cell_id' => $cell_id,
-                        'expected_value' => $input_cell['value'] ?? '',
-                        'actual_value' => '',
-                        'test_schema_id' => $test_schema->id,
-                        'is_verified' => false,
-                        'error_description' => '',
+            }
+
+            $schema_groups = $data['schema_group'];
+            foreach($schema_groups as $schema_group){
+                $schemaGroup = TestSchemaGroup::create([
+                    'excel_version_id' => $excel_version->id,
+                    'name' => $schema_group['name']
+                ]);
+
+                foreach($schema_group['schema'] as $testSchema){
+                    $test_schema = TestSchema::create([
+                        'name' => $testSchema['name'],
+                        'test_schema_group_id' => $schemaGroup->id
                     ]);
+
+                    foreach($testSchema['input_cell_values'] as $input_cell){
+                        $cell_id = InputCell::where('excel_version_id', $excel_version->id)
+                                            ->where('cell', $input_cell['cell'])
+                                            ->first()->id;
+        
+                        InputCellValue::create([
+                            'input_cell_id' => $cell_id,
+                            'value' => $input_cell['value'],
+                            'test_schema_id' => $test_schema->id
+                        ]);
+                    }
+
+                    foreach($testSchema['output_cell_value'] as $input_cell){
+                        $cell_id = OutputCell::where('excel_version_id', $excel_version->id)
+                                            ->where('cell', $input_cell['cell'])
+                                            ->first()->id;
+                        
+                        OutputCellValue::create([
+                            'output_cell_id' => $cell_id,
+                            'expected_value' => $input_cell['value'] ?? '',
+                            'actual_value' => '',
+                            'test_schema_id' => $test_schema->id,
+                            'is_verified' => false,
+                            'error_description' => '',
+                        ]);
+                    }
                 }
             }
 

@@ -75,7 +75,7 @@ class HomeController extends Controller
     }
 
     public function importExcelVersion(ImportVersionRequest $request, $alkesId){
-        if($this->excelVersionService->exportExcelVersion($request->file('json'), $request->file('excel'))){
+        if($this->excelVersionService->importExcelVersion($request->file('file_import'))){
             return to_route('version.index', ['alkes_id' => $alkesId])->with('success', "Sukses Mengimport Versi Excel");
         }else{
             return back()->withInput()->with('error', 'Terjadi Kesalahan, Silahkan Coba Lagi!');

@@ -12,4 +12,8 @@ class TestSchemaGroup extends Model
         'excel_version_id',
         'name'
     ];
+
+    public function test_schema(){
+        return $this->hasMany(TestSchema::class);
+    }
 }
