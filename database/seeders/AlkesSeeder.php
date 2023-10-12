@@ -324,7 +324,7 @@ class AlkesSeeder extends Seeder
                 'excel_name' => 'Timbangan_Dewasa'
             ],[
                 'id' => 79,
-                'name' => 'Thermohygrometer', 
+                'name' => 'Thermohygrometer Digital', 
                 'excel_name' => 'Thermohygrometer_Digital'
             ],[
                 'id' => 80,
@@ -354,6 +354,10 @@ class AlkesSeeder extends Seeder
                 "id" => 86,
                 "name" => "Laryngoscope",
                 "excel_name" => "Laryngoscope"
+            ],[
+                "id" => 87,
+                "name" => "Thermohygrometer Analog",
+                "excel_name" => "Thermohygrometer_Analog"
             ]
         ];
 
