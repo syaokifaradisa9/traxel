@@ -8,4 +8,5 @@
 
 @section('content')
     @include("tutorial.section.app-tutorial")
+    @include("tutorial.section.import-export-calibrator")
 @endsection
