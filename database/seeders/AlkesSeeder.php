@@ -316,8 +316,8 @@ class AlkesSeeder extends Seeder
                 'excel_name' => 'High_Flow_Nasal_Cannula'
             ],[
                 'id' => 77,
-                'name' => 'Cold Flow',
-                "excel_name" => 'Cold_Flow'
+                "name" => "Thermohygrometer Analog",
+                "excel_name" => "Thermohygrometer_Analog"
             ],[
                 'id' => 78,
                 'name' => 'Timbangan Dewasa', 
@@ -354,10 +354,6 @@ class AlkesSeeder extends Seeder
                 "id" => 86,
                 "name" => "Laryngoscope",
                 "excel_name" => "Laryngoscope"
-            ],[
-                "id" => 87,
-                "name" => "Thermohygrometer Analog",
-                "excel_name" => "Thermohygrometer_Analog"
             ]
         ];
 

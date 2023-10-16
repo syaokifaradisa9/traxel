@@ -7,6 +7,5 @@
 ])
 
 @section('content')
-    @include('tutorial.section.format-excel')
-    @include('tutorial.section.create-version')
+    @include("tutorial.section.app-tutorial")
 @endsection
