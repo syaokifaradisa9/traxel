@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('test_schemas', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->text('name');
             $table->foreignIdFor(TestSchemaGroup::class)->constrained();
             $table->string('simulation_date')->nullable();
             $table->string('simulation_time')->nullable();
