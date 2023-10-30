@@ -29,4 +29,8 @@ class ExcelVersion extends Model
     public function group_calibrator(){
         return $this->hasMany(GroupCalibrator::class);
     }
+
+    public function test_schema_group(){
+        return $this->hasMany(TestSchemaGroup::class);
+    }
 }

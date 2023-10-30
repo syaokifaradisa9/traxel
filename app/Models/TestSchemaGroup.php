@@ -16,4 +16,8 @@ class TestSchemaGroup extends Model
     public function test_schema(){
         return $this->hasMany(TestSchema::class);
     }
+
+    public function excel_version(){
+        return $this->belongsTo(ExcelVersion::class);
+    }
 }

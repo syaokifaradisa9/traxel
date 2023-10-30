@@ -71,7 +71,9 @@ Route::middleware('auth')->group(function(){
                                 Route::get('create', 'createSimulation')->name("create-simulation");
                                 Route::post('store', 'storeSimulation')->name("store-simulation");
                                 Route::get('simulation', 'allSimulation')->name("all-simulation");
+                                Route::get('generate', 'generates')->name("generates");
                                 Route::prefix("{schema_id}")->group(function(){
+                                    Route::get('generate', 'generateActualValues')->name("generate-actual-value");
                                     Route::get('cell-tracker', 'cellTracker')->name('cell-tracker');
                                     Route::get('edit', 'editSimulation')->name("edit-simulation");
                                     Route::get('duplicate', 'duplicateSimulation')->name("duplicate-simulation");

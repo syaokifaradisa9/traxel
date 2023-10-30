@@ -3,8 +3,6 @@
 namespace App\Services;
 
 use Exception;
-use TypeError;
-use DivisionByZeroError;
 use App\Models\InputCell;
 use App\Models\Calibrator;
 use App\Models\OutputCell;
@@ -41,11 +39,8 @@ class GroupSimulationService{
     }
     
     public function store($data, $versionId){
-        $outputCells = OutputCell::whereExcelVersionId($versionId)->get();
-
+        DB::beginTransaction();
         try{
-            DB::beginTransaction();
-
             // Membuat Group Skema Simulasi
             $testSchemaGroup = TestSchemaGroup::create([
                 "name" => $data['simulation_name'],
@@ -159,38 +154,6 @@ class GroupSimulationService{
                         ]);
                     }
                 }
-
-                // Pengisian Output
-                $excelversion = ExcelVersion::find($versionId);
-                $inpuCellValues = InputCellValue::whereTestSchemaId($testSchema->id)->get();
-
-                $excel = $this->excelService->getCalculateExcelValue(
-                    public_path("excel\\{$excelversion->alkes->excel_name}-{$excelversion->version_name}.xlsx"),
-                    $inpuCellValues,
-                    "LH"
-                );
-
-                foreach ($outputCells as $outputCell){
-                    $expectedValue = '';
-
-                    try{
-                        $expectedValue = $excel->getCell($outputCell->cell)->getFormattedValue();
-                    }catch (DivisionByZeroError $e) { 
-                    }catch(Exception $e){
-                    }catch(TypeError $e){
-                    }
-
-                    OutputCellValue::create([
-                        'output_cell_id' => $outputCell->id,
-                        'expected_value' => $expectedValue,
-                        'actual_value' => '',
-                        'test_schema_id' => $testSchema->id,
-                        'is_verified' => false,
-                        'error_description' => "",
-                    ]);
-                }
-
-                $this->testSchemaService->testSimulation($versionId, $testSchema->id);
             }
 
             DB::commit();
@@ -237,5 +200,17 @@ class GroupSimulationService{
         }catch(Exception $e){
             return false;
         }
+    }
+
+    public function generatesActualValues($groupId, $num){
+        $schemas = TestSchema::select("id")->whereTestSchemaGroupId($groupId)->where(function($testSchema){
+            $testSchema->whereNull("simulation_date");
+        })->limit($num)->get();
+
+        foreach($schemas as $schema){
+            $this->testSchemaService->generateActualValueSchema($schema->id);
+        }
+
+        return true;
     }
 }

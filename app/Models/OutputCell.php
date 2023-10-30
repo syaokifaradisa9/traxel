@@ -17,4 +17,8 @@ class OutputCell extends Model
     public function output_cell_value(){
         return $this->hasMany(OutputCellValue::class);
     }
+
+    public function excel_version(){
+        return $this->belongsTo(ExcelVersion::class);
+    }
 }

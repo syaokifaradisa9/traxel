@@ -9,12 +9,10 @@ use Illuminate\Database\Seeder;
 
 class InputCellSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $excels = [
+
             // Suction Pump
             [
                 "alkes_id" => 1,

@@ -33,8 +33,8 @@
                 <div class="row">
                     @foreach ($outputCells as $outputCell)
                         @php
-                            if(isset($outputCellValues)){
-                                $value = $outputCellValues->where('output_cell_id', $outputCell->id)->first()->expected_value;
+                            if($outputCellValues ?? []){
+                                $value = $outputCellValues->where("cell", $outputCell->cell)->first()['expected_value'] ?? '';
                             }else{
                                 $value = '';
                             }

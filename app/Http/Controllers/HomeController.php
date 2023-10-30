@@ -217,6 +217,14 @@ class HomeController extends Controller
 
     /* ============================== Simulasi ============================== */
 
+    public function generates(Request $request, $alkesId, $versionId, $groupId){
+        if($this->groupSimulationService->generatesActualValues($groupId, $request->num)){
+            return to_route('version.schema_group.schema.index', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'group_id' => $groupId])->with('success', "Sukses Menambahkan Grup Simulasi");
+        }else{
+            return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
+        }
+    }
+
     public function trackingSchema($alkesId, $versionId, $groupId){
         $schemas = $this->testSchemaService->getTestSchemaByGroupId($groupId);
         return view('schemas.index', compact('schemas', 'alkesId', 'versionId', 'groupId'));
@@ -235,7 +243,16 @@ class HomeController extends Controller
             $q->where('cell_name', "!=", "Cell Kalibrator");
             $q->orWhereNUll('cell_name');
         })->get();
-        $outputCellValues = collect(OutputCellValue::where('test_schema_id', $schemaId)->get());
+
+        $outputCellValues = collect(OutputCellValue::where('test_schema_id', $schemaId)->get()->map(function($outputCellValue){
+            return [
+                "id" => $outputCellValue->id,
+                "cell" => $outputCellValue->output_cell->cell,
+                "cell_name" => $outputCellValue->output_cell->cell_name,
+                "expected_value" => $outputCellValue->expected_value
+            ]; 
+        }));
+
         $schema = TestSchema::find($schemaId);
 
         return view('schemas.create', compact('versionId', 'alkesId', 'outputCells', 'outputCellValues', 'schema', 'groupId'));
@@ -251,8 +268,12 @@ class HomeController extends Controller
         }
     }
 
-    public function allSimulation($alkesId, $versionId, $groupId){
-        $simulations = TestSchema::where('test_schema_group_id', $groupId)->get();
+    public function allSimulation(Request $request, $alkesId, $versionId, $groupId){
+        $simulations = TestSchema::where('test_schema_group_id', $groupId)
+                            ->orderBy("date_simulation", "ASC")
+                            ->limit($request->num)
+                            ->get();
+                            
         foreach($simulations as $simulation){
             $this->testSchemaService->testSimulation($versionId, $simulation->id);
         }
@@ -262,6 +283,22 @@ class HomeController extends Controller
             'version_id' => $versionId,
             'group_id' => $groupId
         ])->with("success", "Semua Simulasi Telah Dilakukan, Silahkan Lihat Hasil Pada Halaman Detail Skema Simulasi!");
+    }
+
+    public function generateActualValues($alkesId, $versionId, $groupId, $schemaId){
+        if($this->testSchemaService->generateActualValueSchema($schemaId)){
+            return to_route('version.schema_group.schema.index', [
+                'alkes_id' => $alkesId,
+                'version_id' => $versionId,
+                'group_id' => $groupId,
+            ])->with("success", "Generate Sukses");
+        }
+
+        return to_route('version.schema_group.schema.index', [
+            'alkes_id' => $alkesId,
+            'version_id' => $versionId,
+            'group_id' => $groupId
+        ])->with("error", "Generate Gagal");
     }
 
     public function detailSimulation($alkesId, $versionId, $groupId, $schemaId){

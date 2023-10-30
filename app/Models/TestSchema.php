@@ -20,7 +20,8 @@ class TestSchema extends Model
 
     protected $appends = [
         'percentage',
-        'simulation_days_ago'
+        'simulation_days_ago',
+        "can_generate"
     ];
 
     public function getPercentageAttribute(){
@@ -36,5 +37,10 @@ class TestSchema extends Model
         $today = Carbon::today();
 
         return $yourDate->diffInDays($today);
+    }
+
+    public function getCanGenerateAttribute(){
+        $groupCalibratorInResultCount = $this->test_schema_group->excel_version->group_calibrator->where("cell_LH", "!=", "")->count();
+        return OutputCellValue::where('test_schema_id', $this->id)->count() == $groupCalibratorInResultCount;
     }
 }

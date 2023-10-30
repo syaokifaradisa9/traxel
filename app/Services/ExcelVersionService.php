@@ -3,15 +3,18 @@
 namespace App\Services;
 
 use Exception;
+use TypeError;
 use ZipArchive;
 use App\Models\Alkes;
-use App\Models\Calibrator;
+use DivisionByZeroError;
 use App\Models\InputCell;
+use App\Models\Calibrator;
 use App\Models\OutputCell;
 use App\Models\TestSchema;
 use App\Models\ExcelVersion;
-use App\Models\GroupCalibrator;
 use App\Models\InputCellValue;
+use App\Services\ExcelService;
+use App\Models\GroupCalibrator;
 use App\Models\OutputCellValue;
 use App\Models\TestSchemaGroup;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +23,11 @@ use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class ExcelVersionService{
+    private $excelService;
+    public function __construct(ExcelService $excelService){
+        $this->excelService = $excelService;
+    }
+    
     private function getCellWithRedTextInSheet($file_path, $sheet_name){
         $spreadsheet = (new Xlsx())->load($file_path);
         $sheet = $spreadsheet->getSheetByName($sheet_name);

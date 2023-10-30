@@ -5,6 +5,7 @@ namespace App\Services;
 use Exception;
 use TypeError;
 use DivisionByZeroError;
+use App\Models\OutputCell;
 use App\Models\TestSchema;
 use App\Models\ExcelVersion;
 use App\Models\InputCellValue;
@@ -27,6 +28,73 @@ class TestSchemaService{
 
     public function getOutputCellValueBySchemaId($schemaId){
         return OutputCellValue::where('test_schema_id', $schemaId)->get();
+    }
+
+    public function generateActualValueSchema($schemaId){
+        try{
+            $outputCells = OutputCell::whereHas("excel_version", function($excelversion) use ($schemaId){
+                $excelversion->whereHas("test_schema_group", function($testSchemaGroup) use ($schemaId){
+                    $testSchemaGroup->whereHas("test_schema", function($testSchema) use ($schemaId){
+                        $testSchema->where("id", $schemaId);
+                    });
+                });
+            })->get();
+    
+            $inputValues = InputCellValue::select("input_cell_id", "value")
+                ->whereTestSchemaId($schemaId)
+                ->get();
+    
+            $excelversion = $outputCells[0]->excel_version;
+            $excel = $this->excelService->getCalculateExcelValue(
+                public_path("excel\\{$excelversion->alkes->excel_name}-{$excelversion->version_name}.xlsx"),
+                $inputValues,
+                "LH"
+            );
+    
+            foreach($outputCells as $outputCell) {
+                $actual_value = '';
+                $isVerified = true;
+                $error_description = '';
+                $expected_value = '';
+    
+                try{
+                    $actual_value = $excel->getCell($outputCell->cell)->getFormattedValue();
+                    
+                    if($actual_value == "#N/A"){
+                        $expected_value = '';
+                    }else{
+                        $expected_value = $actual_value;
+                    }
+                }catch (DivisionByZeroError $e) {
+                    $expected_value = '';
+                    $actual_value = "#DIV/0";
+                    $isVerified = false;
+                    $error_description = "#DIV/0";
+                }catch(Exception $e){
+                    $expected_value = '';
+                    $isVerified = false;
+                    $error_description = $e->getMessage();
+                }catch(TypeError $e){
+                    $expected_value = '';
+                    $isVerified = false;
+                    $error_description = $e->getMessage(); 
+                }
+                
+                OutputCellValue::create([
+                    'output_cell_id' => $outputCell->id,
+                    'expected_value' => $expected_value,
+                    'actual_value' => $actual_value,
+                    'test_schema_id' => $schemaId,
+                    'is_verified' => $isVerified,
+                    'error_description' => $error_description,
+                ]);
+            }
+        }catch(Exception $e){
+            return $this->generateActualValueSchema($schemaId);
+        }
+
+        $this->testSimulation($excelversion->id, $schemaId);
+        return true;
     }
 
     public function testSimulation($versionId, $schemaId){
