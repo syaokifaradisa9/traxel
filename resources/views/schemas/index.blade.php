@@ -23,7 +23,7 @@
         </div>
         <div class="card-body">
             <div class="text-center">
-                @foreach([10, 20, 30, 35] as $value)
+                @foreach([5, 10, 15, 20, 30, 35] as $value)
                     <a href="{{ route('version.schema_group.schema.generates', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'group_id' => $groupId, 'num' => $value]) }}" class="btn btn-warning">
                         <i class="fas fa-robot mr-1"></i>
                         Generate Aktual per {{ $value }} Skema
@@ -31,7 +31,7 @@
                 @endforeach
             </div>
             <div class="text-center mt-2">
-                @foreach([10, 20, 30, 35] as $value)
+                @foreach([25, 50, 75, 100, 125] as $value)
                     <a href="{{ route('version.schema_group.schema.all-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'group_id' => $groupId, 'num' => $value]) }}" class="btn btn-success">
                         <i class="fas fa-play-circle mr-1"></i>
                         Simulasi per {{ $value }} Skema

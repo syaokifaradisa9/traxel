@@ -134,11 +134,11 @@ class HomeController extends Controller
     }
 
     public function calibratorGroupExport($alkesId, $versionId, $group_id){
-        return $this->groupSimulationService->exportGroupCalibrator($group_id);
+        return $this->calibratorService->exportGroupCalibrator($group_id);
     }
 
     public function calibratorGroupDelete($alkesId, $versionId, $group_id){
-        if($this->groupSimulationService->delete($group_id)){
+        if($this->calibratorService->delete($group_id)){
             return to_route('version.calibrator-group.index', ['alkes_id' => $alkesId, 'version_id' => $versionId])->with('success', "Sukses Menghapus Group Calibrator!");
         }else{
             return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
@@ -215,6 +215,14 @@ class HomeController extends Controller
         }
     }
 
+    public function deleteSimulationGroup($alkesId, $versionId, $groupId){
+        if($this->groupSimulationService->delete($groupId)){
+            return to_route('version.schema_group.index', ['alkes_id' => $alkesId, 'version_id' => $versionId])->with('success', "Sukses Menghapus Grup Simulasi");
+        }else{
+            return back()->withInput()->with('error', "Terjadi Kesalahan, Silahkan Coba Lagi!");
+        }
+    }
+
     /* ============================== Simulasi ============================== */
 
     public function generates(Request $request, $alkesId, $versionId, $groupId){
@@ -270,7 +278,7 @@ class HomeController extends Controller
 
     public function allSimulation(Request $request, $alkesId, $versionId, $groupId){
         $simulations = TestSchema::where('test_schema_group_id', $groupId)
-                            ->orderBy("date_simulation", "ASC")
+                            ->orderBy("simulation_date", "ASC")
                             ->limit($request->num)
                             ->get();
                             

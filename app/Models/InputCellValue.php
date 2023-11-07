@@ -17,4 +17,8 @@ class InputCellValue extends Model
     public function input_cell(){
         return $this->belongsTo(InputCell::class);
     }
+
+    public function test_schema(){
+        return $this->belongsTo(TestSchema::class);
+    }
 }

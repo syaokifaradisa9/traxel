@@ -66,6 +66,7 @@ Route::middleware('auth')->group(function(){
                         Route::get('create', 'createSchemaGroup')->name('create-schemagroup');
                         Route::post('store', 'storeSimulationGroup')->name("store-schemagroup");
                         Route::prefix("{group_id}")->group(function(){
+                            Route::get('delete', "deleteSimulationGroup")->name("delete-schemagroup");
                             Route::prefix("schema")->name('schema.')->group(function(){
                                 Route::get('/', 'trackingSchema')->name('index');
                                 Route::get('create', 'createSimulation')->name("create-simulation");

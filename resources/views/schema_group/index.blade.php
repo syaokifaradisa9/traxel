@@ -51,16 +51,14 @@
                                     <i class="fas fa-search mr-1"></i>
                                     Tracking
                                   </a>
-                              </div>
-                              <div class="row mt-1">
-                                  {{-- <a href="{{ route('version.schema.edit-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'schema_id' => $value->id]) }}" class="btn btn-primary col mr-1">
-                                        <i class="fas fa-edit"></i>
-                                        Edit Default
+                                    <a href="{{ route('version.schema_group.delete-schemagroup', [
+                                        'alkes_id' => $alkesId,
+                                        'version_id' => $versionId,
+                                        "group_id" => $value->id]
+                                    ) }}" class="btn btn-danger col">
+                                        <i class="fas fa-trash-alt mr-1"></i>
+                                        Hapus
                                   </a>
-                                  <a href="{{ route('version.schema.duplicate-simulation', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'schema_id' => $value->id]) }}" class="btn btn-secondary col ml-1">
-                                        <i class="fas fa-clone"></i>
-                                        Duplikat
-                                  </a> --}}
                               </div>
                           </td>
                       </tr>

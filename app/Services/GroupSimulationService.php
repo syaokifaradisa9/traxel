@@ -164,44 +164,6 @@ class GroupSimulationService{
         }
     }
 
-    public function exportGroupCalibrator($group_id){
-        $groupCalibrator = GroupCalibrator::with('calibrator')->find($group_id);
-        
-        $calibrators = [];
-        foreach($groupCalibrator->calibrator as $calibrator){
-            $calibrators[] = [
-                "name" => $calibrator->name,
-                "merk" => $calibrator->merk,
-                "model_type" => $calibrator->model_type,
-                "model_type_name" => $calibrator->model_type_name,
-                "serial_number" => $calibrator->serial_number
-            ];
-        }
-
-        $jsonData =  json_encode([
-            "name" => $groupCalibrator->name,
-            "calibrator" => $calibrators
-        ]);
-
-        $filename = $groupCalibrator->name . '.json';
-        header('Content-Type: application/json');
-        header("Content-Disposition: attachment; filename=$filename");
-
-        echo $jsonData;
-        exit;
-    }
-
-    public function delete($groupId){
-        try{
-            Calibrator::where("group_calibrator_id", $groupId)->delete();
-            GroupCalibrator::find($groupId)->delete();
-
-            return true;
-        }catch(Exception $e){
-            return false;
-        }
-    }
-
     public function generatesActualValues($groupId, $num){
         $schemas = TestSchema::select("id")->whereTestSchemaGroupId($groupId)->where(function($testSchema){
             $testSchema->whereNull("simulation_date");
@@ -212,5 +174,27 @@ class GroupSimulationService{
         }
 
         return true;
+    }
+
+    public function delete($groupId){
+        DB::beginTransaction();
+        try{
+            InputCellValue::whereHas("test_schema", function($testSchema) use ($groupId){
+                $testSchema->where("test_schema_group_id", $groupId);
+            })->delete();
+    
+            OutputCellValue::whereHas("test_schema", function($testSchema) use ($groupId){
+                $testSchema->where("test_schema_group_id", $groupId);
+            })->delete();
+    
+            TestSchema::whereTestSchemaGroupId($groupId)->delete();
+            TestSchemaGroup::find($groupId)->delete();
+
+            DB::commit();
+            return true;
+        }catch(Exception $e){
+            DB::rollBack();
+            return false;
+        }
     }
 }
