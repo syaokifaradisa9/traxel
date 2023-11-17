@@ -62,14 +62,16 @@ class TestSchemaService{
                     
                     if($actual_value == "#N/A"){
                         $expected_value = '';
+                    }elseif($actual_value == "#DIV/0!"){
+                        $expected_value = '';
                     }else{
                         $expected_value = $actual_value;
                     }
                 }catch (DivisionByZeroError $e) {
                     $expected_value = '';
-                    $actual_value = "#DIV/0";
+                    $actual_value = "#DIV/0!";
                     $isVerified = false;
-                    $error_description = "#DIV/0";
+                    $error_description = "#DIV/0!";
                 }catch(Exception $e){
                     $expected_value = '';
                     $isVerified = false;
@@ -77,7 +79,7 @@ class TestSchemaService{
                 }catch(TypeError $e){
                     $expected_value = '';
                     $isVerified = false;
-                    $error_description = $e->getMessage(); 
+                    $error_description = $e->getMessage();
                 }
                 
                 OutputCellValue::create([
