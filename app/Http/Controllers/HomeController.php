@@ -233,9 +233,17 @@ class HomeController extends Controller
         }
     }
 
-    public function trackingSchema($alkesId, $versionId, $groupId){
-        $schemas = $this->testSchemaService->getTestSchemaByGroupId($groupId);
-        return view('schemas.index', compact('schemas', 'alkesId', 'versionId', 'groupId'));
+    public function trackingSchema(Request $request, $alkesId, $versionId, $groupId){
+        $isShowDone = $request->is_show_done ?? false;
+        $isAutoGenerate = $request->is_auto_generate ?? false;
+        $isAutoSimulation = $request->is_auto_simulation ?? false;
+
+        $schemas = $this->testSchemaService->getTestSchemaByGroupId($groupId, $isShowDone);
+        $schemaCounter = $this->testSchemaService->getCountTestSchemaByGroupId($groupId);
+        return view('schemas.index', compact(
+            'schemas', 'alkesId', 'versionId', 'groupId', 'isShowDone',
+            'isAutoGenerate', 'isAutoSimulation', 'schemaCounter'
+        ));
     }
 
     public function createSimulation($alkesId, $versionId){
@@ -258,7 +266,7 @@ class HomeController extends Controller
                 "cell" => $outputCellValue->output_cell->cell,
                 "cell_name" => $outputCellValue->output_cell->cell_name,
                 "expected_value" => $outputCellValue->expected_value
-            ]; 
+            ];
         }));
 
         $schema = TestSchema::find($schemaId);
@@ -293,19 +301,25 @@ class HomeController extends Controller
         ])->with("success", "Semua Simulasi Telah Dilakukan, Silahkan Lihat Hasil Pada Halaman Detail Skema Simulasi!");
     }
 
-    public function generateActualValues($alkesId, $versionId, $groupId, $schemaId){
+    public function generateActualValues(Request $request, $alkesId, $versionId, $groupId, $schemaId){
+        $isAuto = $request->is_auto ?? false;
+        $isShowDone = $request->is_show_done ?? false;
         if($this->testSchemaService->generateActualValueSchema($schemaId)){
             return to_route('version.schema_group.schema.index', [
                 'alkes_id' => $alkesId,
                 'version_id' => $versionId,
                 'group_id' => $groupId,
+                "is_auto_generate" => $isAuto,
+                'is_show_done' => $isShowDone,
             ])->with("success", "Generate Sukses");
         }
 
         return to_route('version.schema_group.schema.index', [
             'alkes_id' => $alkesId,
             'version_id' => $versionId,
-            'group_id' => $groupId
+            'group_id' => $groupId,
+            "is_auto_generate" => false,
+            'is_show_done' => $isShowDone,
         ])->with("error", "Generate Gagal");
     }
 
@@ -316,12 +330,16 @@ class HomeController extends Controller
         return view('schemas.detail', compact('alkesId', 'versionId', 'schemaId', 'input_cell_value', 'output_cell_value', 'groupId'));
     }
 
-    public function schemaSimulation($alkesId, $versionId, $groupId, $schemaId){
+    public function schemaSimulation(Request $request, $alkesId, $versionId, $groupId, $schemaId){
+        $isShowDone = $request->is_show_done ?? false;
+        $isAuto = $request->is_auto ?? false;
         $this->testSchemaService->testSimulation($versionId, $schemaId);
         return to_route('version.schema_group.schema.index', [
             'alkes_id' => $alkesId,
             'version_id' => $versionId,
-            'group_id' => $groupId
+            'group_id' => $groupId,
+            'is_show_done' => $isShowDone,
+            "is_auto_simulation" => $isAuto
         ])->with("success", "Simulasi Telah Dilakukan, Silahkan Lihat Hasil Pada Halaman Detail Skema Simulasi!");
     }
 

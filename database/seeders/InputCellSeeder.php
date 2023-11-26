@@ -8754,10 +8754,6 @@ class InputCellSeeder extends Seeder
                     "I41",
                     "J41",
                     "K41",
-                    "B44",
-                    "B45",
-                    "B46",
-                    "B47",
                 ],
                 "output_cells" => [
                     "A2",

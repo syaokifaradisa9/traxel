@@ -18,8 +18,30 @@ class TestSchemaService{
         $this->excelService = $excelService;
     }
 
-    public function getTestSchemaByGroupId($groupId){
-        return TestSchema::where('test_schema_group_id', $groupId)->get();
+    public function getCountTestSchemaByGroupId($groupId){
+        return [
+            "total" => TestSchema::where('test_schema_group_id', $groupId)->count(),
+            "verified" => TestSchema::where('test_schema_group_id', $groupId)
+                            ->whereHas("output_cell_value", function($outputCellValue){
+                                $outputCellValue->where("is_verified", true);
+                            })->count(),
+            "unverified" => TestSchema::where('test_schema_group_id', $groupId)
+                            ->whereHas("output_cell_value", function($outputCellValue){
+                                $outputCellValue->where("is_verified", false);
+                            })->count()
+        ];
+    }
+
+    public function getTestSchemaByGroupId($groupId, $isShowDone){
+        if($isShowDone){
+            return TestSchema::where('test_schema_group_id', $groupId)->whereHas("output_cell_value", function($outputCellValue){
+                $outputCellValue->where("is_verified", true);
+            })->orderBy("simulation_date", "ASC")->orderBy("simulation_time", "ASC")->get();
+        }else{
+            return TestSchema::where('test_schema_group_id', $groupId)->whereHas("output_cell_value", function($outputCellValue){
+                $outputCellValue->where("is_verified", false);
+            })->limit(5)->get();
+        }
     }
 
     public function getInputCellValueBySchemaId($schemaId){
@@ -100,6 +122,12 @@ class TestSchemaService{
     }
 
     public function testSimulation($versionId, $schemaId){
+        $testSchema = testSchema::find($schemaId);
+
+        if($testSchema->can_generate){
+            return $this->generateActualValueSchema($schemaId);
+        }
+
         $input_cell_values = InputCellValue::where('test_schema_id', $schemaId)->get();
         $expected_output_cell_values = OutputCellValue::where('test_schema_id', $schemaId)->get();
 
@@ -137,10 +165,10 @@ class TestSchemaService{
             $output_value->save();
         }
 
-        $TestSchema = TestSchema::find($schemaId);
-        $TestSchema->simulation_date = date("Y-m-d", strtotime(now()));
-        $TestSchema->simulation_time = date("H:i:s", strtotime(now()));
-        $TestSchema->save();
+        
+        $testSchema->simulation_date = date("Y-m-d", strtotime(now()));
+        $testSchema->simulation_time = date("H:i:s", strtotime(now()));
+        $testSchema->save();
 
         return true;
     }

@@ -18,6 +18,10 @@ class TestSchema extends Model
         return $this->belongsTo(TestSchemaGroup::class);
     }
 
+    public function output_cell_value(){
+        return $this->hasMany(OutputCellValue::class);
+    }
+
     protected $appends = [
         'percentage',
         'simulation_days_ago',
