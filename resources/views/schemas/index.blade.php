@@ -43,7 +43,7 @@
             </p>
             <div class="text-right">
                 @if($isAutoGenerate || $isAutoSimulation)
-                    <a href="{{ route('version.schema_group.schema.index', [
+                    <a id="stop-autopilot" href="{{ route('version.schema_group.schema.index', [
                         "alkes_id" => $alkesId,
                         "group_id" => $groupId,
                         "version_id" => $versionId,
@@ -220,6 +220,7 @@
                         var count = parseInt(document.getElementById("counter").innerText);
                         if(count == 0){
                             document.getElementById("counter").innerText = `0 (Harap Tunggu ...)`;
+                            document.getElementById("stop-autopilot").classList.add("d-none");
                             document.getElementById("generate-1").click();
                             clearInterval(counterInterval);
                         }else{
