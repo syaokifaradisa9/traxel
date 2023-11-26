@@ -5,7 +5,7 @@
         ["menu" => "Home", "is_active" => false, 'href' => route('home')],
         ["menu" => "Versi Excel", "is_active" => false, 'href' => route('version.index', ['alkes_id' => $alkesId])],
         ["menu" => "Group Simulasi", "is_active" => false, 'href' => route('version.schema_group.index', ['alkes_id' => $alkesId, 'version_id' => $versionId])],
-        ["menu" => "Simulasi", "is_active" => false, 'href' => route('version.schema_group.schema.index', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'group_id' => $groupId, 'is_show_done' => $isShowDone])],
+        ["menu" => "Simulasi", "is_active" => false, 'href' => route('version.schema_group.schema.index', ['alkes_id' => $alkesId, 'version_id' => $versionId, 'group_id' => $groupId])],
         ["menu" => "Detail", "is_active" => true, 'href' => ''],
     ]
 ])
