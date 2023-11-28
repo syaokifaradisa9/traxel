@@ -84,6 +84,8 @@ class TestSchemaService{
                     
                     if($actual_value == "#N/A"){
                         $expected_value = '';
+                    }elseif($actual_value == "#VALUE!"){
+                        $expected_value = '';
                     }elseif($actual_value == "#DIV/0!"){
                         $expected_value = '';
                     }else{
