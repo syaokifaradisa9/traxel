@@ -4,13 +4,11 @@ namespace App\Services;
 
 use Exception;
 use App\Models\InputCell;
-use App\Models\Calibrator;
 use App\Models\OutputCell;
 use App\Models\TestSchema;
 use App\Models\ExcelVersion;
 use App\Models\InputCellValue;
 use App\Services\ExcelService;
-use App\Models\GroupCalibrator;
 use App\Models\OutputCellValue;
 use App\Models\TestSchemaGroup;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +16,6 @@ use Illuminate\Support\Facades\DB;
 class GroupSimulationService{
     private $testSchemaService;
     public function __construct(ExcelService $excelService, TestSchemaService $testSchemaService){
-        $this->excelService = $excelService;
         $this->testSchemaService = $testSchemaService;
     }
 
@@ -42,7 +39,7 @@ class GroupSimulationService{
         try{
             // Membuat Group Skema Simulasi
             $testSchemaGroup = TestSchemaGroup::create([
-                "name" => $data['type'] . " - " .$data['simulation_name'],
+                "name" => $data['type'] . " " .$data['simulation_name'],
                 'excel_version_id' => $versionId
             ]);
 
