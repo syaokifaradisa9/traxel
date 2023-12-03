@@ -16,7 +16,6 @@ use App\Models\TestSchemaGroup;
 use Illuminate\Support\Facades\DB;
 
 class GroupSimulationService{
-    private $excelService;
     private $testSchemaService;
     public function __construct(ExcelService $excelService, TestSchemaService $testSchemaService){
         $this->excelService = $excelService;
@@ -43,7 +42,7 @@ class GroupSimulationService{
         try{
             // Membuat Group Skema Simulasi
             $testSchemaGroup = TestSchemaGroup::create([
-                "name" => $data['simulation_name'],
+                "name" => $data['type'] . " - " .$data['simulation_name'],
                 'excel_version_id' => $versionId
             ]);
 
@@ -103,7 +102,25 @@ class GroupSimulationService{
 
             // Mendapatkan Kombinasi Kalibrator
             $allCombinations = [];
-            $this->generateCombinations($group_calibrators, [], $allCombinations);
+            if($data['type'] == "Full"){
+                $this->generateCombinations($group_calibrators, [], $allCombinations);
+            }elseif($data['type'] == "Sample"){
+                for($i = 0; $i < count($group_calibrators); $i++){
+                    foreach($group_calibrators[$i] as $calibrator){
+                        $combination = [];
+                        $combination[] = $calibrator;
+
+                        for($j = 0; $j < count($group_calibrators); $j++){
+                            if($j != $i){
+                                $combination[] = $group_calibrators[$j][0];
+                            }
+                        }
+
+                        $allCombinations[] = $combination;
+                    }
+                }
+                
+            }
 
             // Memasukkan Data Simulasi Per Kombinasi Kalibrator
             foreach($allCombinations as $combination) {
@@ -160,6 +177,7 @@ class GroupSimulationService{
             return true;
         }catch(Exception $e){
             DB::rollBack();
+            dd($e);
             return false;
         }
     }

@@ -39,6 +39,21 @@
                 </div>
             </div>
         </div>
+        <div class="card">
+            <div class="card-header row">
+                <h4>Tipe Tracking</h4>
+            </div>
+            <div class="card-body">
+                <div class="form-group col">
+                    <select class="form-control select2 category-select" name="type" id="type">
+                      <option value="" selected hidden>Tipe Tracking</option>
+                      <option value="Full">Full Tracking</option>
+                      <option value="Sample">Sample Tracking</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
 
         <div class="card">
             <div class="card-header row">
