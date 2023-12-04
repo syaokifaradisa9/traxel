@@ -45,6 +45,7 @@
                   <thead>
                     <tr>
                       <th class="text-center" style="width: 50px">No.</th>
+                      <th class="text-center" style="width: 50px">ID</th>
                       <th class="text-center" style="width: 50px">Cell Output</th>
                       <th class="text-center" style="width: 25%">Nilai<br>Ekspektasi</th>
                       <th class="text-center" style="width: 25%">Nilai<br>Aktual</th>
@@ -59,6 +60,9 @@
                     @foreach ($output_cell_value as $index => $output_value)
                         <tr>
                             <td class="text-center align-middle" style="width: 50px">{{ $index + 1 }}</td>
+                            <td class="text-center align-middle">
+                                {{ $output_value->id }}
+                            </td>
                             <td class="text-center align-middle">
                                 {{ $output_value->output_cell->cell }}
                             </td>
