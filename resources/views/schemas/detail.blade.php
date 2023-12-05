@@ -94,7 +94,7 @@
                   </tbody>
                   <tfoot>
                     <tr>
-                        <td colspan="6" class="text-center bg-success pt-3">
+                        <td colspan="8" class="text-center bg-success pt-3">
                             <h5 class="text-white">
                                 {{ $verify_count }}/{{ count($output_cell_value) }} TERVERIFIKASI ({{ number_format(($verify_count/count($output_cell_value)), 4) * 100 }} %)
                             </h5>

@@ -25,7 +25,7 @@
                     <b class="text-danger">
                         Auto {{ $isAutoGenerate ? "Generate" : "Simulasi" }} Dalam
                         <span id="counter">
-                            3
+                            1
                         </span>
                     </b>
                 </div>
@@ -50,7 +50,7 @@
                         'is_show_done' => $isShowDone
                     ]) }}" class="btn btn-danger">
                         <i class="fas fa-stop mr-1"></i>
-                        Stop Autopilot {{ $isShowDone ? "Simulasi " : "Generate" }}
+                        Stop Autopilot {{ $isAutoSimulation ? "Simulasi " : "Generate" }}
                     </a>
                 @else
                     <a href="{{ route('version.schema_group.schema.index', [
@@ -58,11 +58,20 @@
                         "group_id" => $groupId,
                         "version_id" => $versionId,
                         'is_show_done' => $isShowDone,
-                        'is_auto_generate' => $isShowDone ? false : true,
-                        'is_auto_simulation' => $isShowDone ? true : false
+                        'is_auto_generate' => true,
                     ]) }}" class="btn btn-primary">
                         <i class="fas fa-robot mr-1"></i>
-                        Autopilot {{ $isShowDone ? "Simulasi " : "Generate" }}
+                        Autopilot Generate
+                    </a>
+                    <a href="{{ route('version.schema_group.schema.index', [
+                        "alkes_id" => $alkesId,
+                        "group_id" => $groupId,
+                        "version_id" => $versionId,
+                        'is_show_done' => $isShowDone,
+                        'is_auto_simulation' => true
+                    ]) }}" class="btn btn-primary">
+                        <i class="fas fa-robot mr-1"></i>
+                        Autopilot Simulasi
                     </a>
                 @endif
                 <a href="{{ route('version.schema_group.schema.index', [
