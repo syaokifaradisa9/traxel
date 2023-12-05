@@ -148,8 +148,14 @@ class GroupSimulationService{
 
                 // Memasukkan Input Kalibrator dan Output Ekspektasi Kalibrator
                 foreach($combination as $calibrator){
+                    if(!InputCell::where('cell', $calibrator['ID'])->where('excel_version_id', $versionId)->exists()){
+                        InputCell::create([
+                            'cell' => $calibrator['ID'],
+                            'excel_version_id' => $versionId
+                        ]);
+                    }
+
                     $cell_id_id = InputCell::where('cell', $calibrator['ID'])->where('excel_version_id', $versionId)->first()->id;
-                    
                     InputCellValue::create([
                         'input_cell_id' => $cell_id_id,
                         'value' => $calibrator['calibrator'],
