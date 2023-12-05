@@ -61,6 +61,7 @@ class TestSchemaService{
                     });
                 });
             })->get();
+
     
             $inputValues = InputCellValue::select("input_cell_id", "value")
                 ->whereTestSchemaId($schemaId)
@@ -73,6 +74,7 @@ class TestSchemaService{
                 "LH"
             );
     
+
             foreach($outputCells as $outputCell) {
                 $actual_value = '';
                 $isVerified = true;
@@ -106,16 +108,26 @@ class TestSchemaService{
                     $error_description = $e->getMessage();
                 }
                 
-                OutputCellValue::create([
-                    'output_cell_id' => $outputCell->id,
-                    'expected_value' => $expected_value,
-                    'actual_value' => $actual_value,
-                    'test_schema_id' => $schemaId,
-                    'is_verified' => $isVerified,
-                    'error_description' => $error_description,
-                ]);
+		if($outputCell->cell_name == "Cell Kalibrator"){
+		    OutputCellValue::where('output_cell_id', $outputCell->id)->where("test_schema_id", $schemaId)->update([
+                        'expected_value' => $expected_value,
+                        'actual_value' => $actual_value,
+                        'is_verified' => $isVerified,
+                        'error_description' => $error_description,
+                    ]);
+		}else{
+		    OutputCellValue::create([
+                        'output_cell_id' => $outputCell->id,
+                        'expected_value' => $expected_value,
+                        'actual_value' => $actual_value,
+                        'test_schema_id' => $schemaId,
+                        'is_verified' => $isVerified,
+                        'error_description' => $error_description,
+                    ]);
+		}
             }
         }catch(Exception $e){
+            dd($e);
             return $this->generateActualValueSchema($schemaId);
         }
 

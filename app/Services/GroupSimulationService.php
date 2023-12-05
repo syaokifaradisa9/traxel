@@ -156,6 +156,7 @@ class GroupSimulationService{
                     }
 
                     $cell_id_id = InputCell::where('cell', $calibrator['ID'])->where('excel_version_id', $versionId)->first()->id;
+                    
                     InputCellValue::create([
                         'input_cell_id' => $cell_id_id,
                         'value' => $calibrator['calibrator'],
@@ -166,7 +167,7 @@ class GroupSimulationService{
                         $cell_lh_id = OutputCell::where('cell', $calibrator['LH'])->where('excel_version_id', $versionId)->first()->id;
                         OutputCellValue::create([
                             'output_cell_id' => $cell_lh_id,
-                            'expected_value' => $calibrator['calibrator'],
+                            'expected_value' => '',
                             'actual_value' => '',
                             'test_schema_id' => $testSchema->id,
                             'is_verified' => false,
