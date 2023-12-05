@@ -151,6 +151,7 @@ class GroupSimulationService{
                     if(!InputCell::where('cell', $calibrator['ID'])->where('excel_version_id', $versionId)->exists()){
                         InputCell::create([
                             'cell' => $calibrator['ID'],
+                            "cell_name" => "Cell Kalibrator",
                             'excel_version_id' => $versionId
                         ]);
                     }
@@ -164,6 +165,14 @@ class GroupSimulationService{
                     ]);
                     
                     if($calibrator['LH']){
+                        if(!OutputCell::where('cell', $calibrator['LH'])->where('excel_version_id', $versionId)->exists()){
+                            OutputCell::create([
+                                'cell' => $calibrator['LH'],
+                                "cell_name" => "Cell Kalibrator",
+                                'excel_version_id' => $versionId
+                            ]);
+                        }
+
                         $cell_lh_id = OutputCell::where('cell', $calibrator['LH'])->where('excel_version_id', $versionId)->first()->id;
                         OutputCellValue::create([
                             'output_cell_id' => $cell_lh_id,
