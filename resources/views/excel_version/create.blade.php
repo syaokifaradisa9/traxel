@@ -22,7 +22,7 @@
             $url = route('version.store', ['alkes_id' => $alkesId]);
         }
     @endphp
-    <form action="{{ $url }}" method="post" enctype="multipart/form-data">
+    {{-- <form action="{{ $url }}" method="post" enctype="multipart/form-data">
         @csrf
         @if(URLHelper::has('edit'))
             @method('PUT')
@@ -65,7 +65,7 @@
                 </button>
             </div>
         </div>
-    </form>
+    </form> --}}
 
     <form action="{{ route('version.import', ['alkes_id' => $alkesId]) }}" method="post" enctype="multipart/form-data">
         @csrf
