@@ -208,7 +208,7 @@ class AlkesSeeder extends Seeder
                 'excel_name' => 'Syringe_Pump'
             ],[
                 'id' => 50,
-                'name' => 'Thermometer Klinik', 
+                'name' => 'Thermometer Klinik',
                 'excel_name' => 'Thermometer_Klinik'
             ],[
                 'id' => 51,
