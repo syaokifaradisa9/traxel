@@ -354,6 +354,16 @@ class AlkesSeeder extends Seeder
                 "id" => 86,
                 "name" => "Laryngoscope",
                 "excel_name" => "Laryngoscope"
+            ],
+            [
+                "id" => 87,
+                "name" => "Laryngoscope",
+                "excel_name" => "Laryngoscope"
+            ],
+            [
+                "id" => 88,
+                "name" => "Photometer",
+                "excel_name" => "Photometer"
             ]
         ];
 
