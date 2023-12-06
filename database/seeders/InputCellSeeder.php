@@ -1966,7 +1966,7 @@ class InputCellSeeder extends Seeder
                     "H48",
                     "I48",
                     "J48",
-                    "K48 "
+                    "K48"
                 ],
                 "output_cells" => [
                     "A2",
