@@ -5532,6 +5532,7 @@ class InputCellSeeder extends Seeder
                     'B49',
                     'B50',
                     'B51',
+                    'B52',
                     'B61'
                 ]
             ],
