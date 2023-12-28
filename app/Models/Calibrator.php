@@ -21,6 +21,10 @@ class Calibrator extends Model
         'full_name'
     ];
 
+    public function group_calibrator(){
+        return $this->belongsTo(GroupCalibrator::class);
+    }
+
     public function getFullNameAttribute(){
         return $this->name 
                 . ", Merek : " . $this->merk. ", " 

@@ -49,7 +49,7 @@
                           <option value="Model" @if(($calibrator->model_type ?? '') == "Model") selected @endif>Model</option>
                           <option value="Tipe"  @if(($calibrator->model_type ?? '') == "Tipe")  selected @endif>Tipe</option>
                         </select>
-                      </div>
+                    </div>
                     <div class="form-group col">
                         <label for=""><b>Nama Model/Tipe</b></label>
                         <input name="model_type_name" type="text" class="form-control" value="{{ $calibrator->model_type_name ?? '' }}">

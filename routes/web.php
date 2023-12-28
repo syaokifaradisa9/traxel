@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Models\Calibrator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 Route::middleware('guest')->group(function(){
     Route::get('/', function () {
@@ -95,5 +97,38 @@ Route::middleware('auth')->group(function(){
 
     Route::name('tutorial')->get('tutorial', function(){
         return view('tutorial.index');
+    });
+
+    Route::get("report", function(){
+        $calibrators = Calibrator::all();
+        
+        $alkesCalibrator = [];
+        foreach ($calibrators as $calibrator){
+            $excelVersion = $calibrator->group_calibrator->excel_version;
+            $version = explode("-", $excelVersion->version_name)[0];
+            $alkesCalibrator[] = [
+                "calibrator" => $calibrator->full_name,
+                "alkes" => $excelVersion->alkes->name . ((strlen($version) == 2) ? "" : " " . $version)
+            ];
+        }
+
+        $alkesCalibrators = [];
+        $alkesCalibrator = collect($alkesCalibrator)->groupBy('calibrator');
+        foreach($alkesCalibrator as $calibrator => $calibrators){
+            $alkes = [];
+            foreach($calibrators as $value){
+                $alkes[] = $value['alkes'];
+            }
+
+            $alkesCalibrators[$calibrator] = $alkes;
+        }
+
+        ksort($alkesCalibrators);
+        
+        $pdf = Pdf::loadView('calibrator_report', [
+            "calibrators" => $alkesCalibrators
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->stream('Kalibrator.pdf');
     });
 });

@@ -12,7 +12,7 @@ class ExcelVersion extends Model
     protected $fillable = [
         'alkes_id',
         'version_name'
-    ]; 
+    ];
 
     public function alkes(){
         return $this->belongsTo(Alkes::class);

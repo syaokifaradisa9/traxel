@@ -435,7 +435,7 @@ class ExcelVersionService{
             $zip = new ZipArchive();
 
             $file->move(
-                public_path("temp"), 
+                public_path("temp"),
                 "zipper.zip"
             );
 

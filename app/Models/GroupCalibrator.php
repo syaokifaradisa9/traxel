@@ -19,4 +19,8 @@ class GroupCalibrator extends Model
     public function calibrator(){
         return $this->hasMany(Calibrator::class);
     }
+
+    public function excel_version(){
+        return $this->belongsTo(ExcelVersion::class);
+    }
 }

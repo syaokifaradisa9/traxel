@@ -240,6 +240,8 @@ class HomeController extends Controller
 
         $schemas = $this->testSchemaService->getTestSchemaByGroupId($groupId, $isShowDone);
         $schemaCounter = $this->testSchemaService->getCountTestSchemaByGroupId($groupId);
+
+        // dd($isAutoGenerate, $isAutoGenerate);
         return view('schemas.index', compact(
             'schemas', 'alkesId', 'versionId', 'groupId', 'isShowDone',
             'isAutoGenerate', 'isAutoSimulation', 'schemaCounter'
@@ -326,7 +328,7 @@ class HomeController extends Controller
     public function detailSimulation($alkesId, $versionId, $groupId, $schemaId){
         $input_cell_value = $this->testSchemaService->getInputCellValueBySchemaId($schemaId);
         $output_cell_value = $this->testSchemaService->getOutputCellValueBySchemaId($schemaId);
-
+        
         return view('schemas.detail', compact('alkesId', 'versionId', 'schemaId', 'input_cell_value', 'output_cell_value', 'groupId'));
     }
 
