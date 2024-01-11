@@ -176,7 +176,7 @@ class GroupSimulationService{
                         $cell_lh_id = OutputCell::where('cell', $calibrator['LH'])->where('excel_version_id', $versionId)->first()->id;
                         OutputCellValue::create([
                             'output_cell_id' => $cell_lh_id,
-                            'expected_value' => '',
+                            'expected_value' => $calibrator['calibrator'],
                             'actual_value' => '',
                             'test_schema_id' => $testSchema->id,
                             'is_verified' => false,
@@ -190,7 +190,6 @@ class GroupSimulationService{
             return true;
         }catch(Exception $e){
             DB::rollBack();
-            dd($e);
             return false;
         }
     }

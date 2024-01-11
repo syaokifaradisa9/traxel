@@ -90,6 +90,8 @@ class TestSchemaService{
                         $expected_value = '';
                     }elseif($actual_value == "#DIV/0!"){
                         $expected_value = '';
+                    }elseif($actual_value == "#NUM!"){
+                        $expected_value = '';
                     }else{
                         $expected_value = $actual_value;
                     }
@@ -99,11 +101,11 @@ class TestSchemaService{
                     $isVerified = false;
                     $error_description = "#DIV/0!";
                 }catch(Exception $e){
-                    $expected_value = '';
+                    $expected_value = $e;
                     $isVerified = false;
                     $error_description = $e->getMessage();
                 }catch(TypeError $e){
-                    $expected_value = '';
+                    $expected_value = $e;
                     $isVerified = false;
                     $error_description = $e->getMessage();
                 }

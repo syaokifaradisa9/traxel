@@ -11161,6 +11161,28 @@ class InputCellSeeder extends Seeder
                     "excel_version_id" => $excel_version->id
                 ]);
             }
+
+            // Timbangan Dewasa, Sphygmo, BPM
+            if(in_array($alkes_id, [44, 78, 9])){
+                $excel_version = ExcelVersion::create([
+                    'alkes_id' => $alkes_id,
+                    'version_name' => ($excel['version_name'] ?? '') . '10-01-24'
+                ]);
+        
+                foreach ($excel['input_cells'] as $cell){
+                    InputCell::create([
+                        'cell' => $cell,
+                        "excel_version_id" => $excel_version->id
+                    ]);
+                }
+        
+                foreach ($excel['output_cells'] as $cell){
+                    OutputCell::create([
+                        'cell' => $cell,
+                        "excel_version_id" => $excel_version->id
+                    ]);
+                }
+            }
         }
     }
 }
