@@ -273,6 +273,7 @@ class InputCellSeeder extends Seeder
             // Analytical Balance
             [
                 "alkes_id" => 2,
+                "code_version" => "10-01-24",
                 "input_cells" => [
                     "I2",
                     "D7",
@@ -457,6 +458,7 @@ class InputCellSeeder extends Seeder
             // Anastesi Ventilator
             [
                 "alkes_id" => 3,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "F14",
@@ -626,6 +628,7 @@ class InputCellSeeder extends Seeder
             // Audiometer
             [
                 "alkes_id" => 4,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "D15",
@@ -985,6 +988,7 @@ class InputCellSeeder extends Seeder
             // Autoclave
             [
                 "alkes_id" => 5,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "D8",
@@ -1045,6 +1049,7 @@ class InputCellSeeder extends Seeder
             // Baby Incubator
             [
                 "alkes_id" => 6,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     'I2',
                     'E12',
@@ -1299,6 +1304,7 @@ class InputCellSeeder extends Seeder
             // Patient Monitor
             [
                 "alkes_id" => 7,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "F14",
@@ -1516,6 +1522,7 @@ class InputCellSeeder extends Seeder
             // BPM
             [
                 "alkes_id" => 9,
+                "code_version" => "10-01-24",
                 "input_cells" => [
                     "I2",
                     "J14",
@@ -1702,6 +1709,7 @@ class InputCellSeeder extends Seeder
             [
                 "version_name" => "Pengujian-",
                 'alkes_id' => 10,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "G9",
@@ -1803,6 +1811,7 @@ class InputCellSeeder extends Seeder
             [
                 "version_name" => "Kalibrasi-",
                 'alkes_id' => 10,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E9",
@@ -1909,6 +1918,7 @@ class InputCellSeeder extends Seeder
             // Centrifuge Refrigerator
             [
                 "alkes_id" => 11,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E9",
@@ -2028,6 +2038,7 @@ class InputCellSeeder extends Seeder
             // CPAP
             [
                 "alkes_id" => 12,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -2165,6 +2176,7 @@ class InputCellSeeder extends Seeder
             // CTG
             [
                 'alkes_id' => 13,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -2263,6 +2275,7 @@ class InputCellSeeder extends Seeder
             // Defibrillator
             [
                 "alkes_id" => 14,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "F14",
@@ -2398,6 +2411,7 @@ class InputCellSeeder extends Seeder
             // Defibrillator Monitor
             [
                 "alkes_id" => 15,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "F7",
@@ -2445,6 +2459,7 @@ class InputCellSeeder extends Seeder
             // Defibrillator With ECG
             [
                 "alkes_id" => 16,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "F14",
@@ -2661,6 +2676,7 @@ class InputCellSeeder extends Seeder
             // Dental Unit
             [
                 "alkes_id" => 17,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E15",
@@ -2754,6 +2770,7 @@ class InputCellSeeder extends Seeder
             // Fetal Doppler
             [
                 "alkes_id" => 18,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -2852,6 +2869,7 @@ class InputCellSeeder extends Seeder
             // ECG Recorder
             [
                 "alkes_id" => 19,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E14",
@@ -2965,6 +2983,7 @@ class InputCellSeeder extends Seeder
             // EEG
             [
                 "alkes_id" => 20,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -3253,6 +3272,7 @@ class InputCellSeeder extends Seeder
             // EST
             [
                 "alkes_id" => 21,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E14",
@@ -3444,6 +3464,7 @@ class InputCellSeeder extends Seeder
             // ESU
             [
                 "alkes_id" => 22,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "F7",
@@ -3597,6 +3618,7 @@ class InputCellSeeder extends Seeder
             // Examination Lamp
             [
                 "alkes_id" => 23,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "D16",
@@ -3666,6 +3688,7 @@ class InputCellSeeder extends Seeder
             // Flowmeter
             [
                 'alkes_id' => 24,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E8",
@@ -3766,6 +3789,7 @@ class InputCellSeeder extends Seeder
             // Haemodialisa
             [
                 "alkes_id" => 25,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E8",
@@ -3885,6 +3909,7 @@ class InputCellSeeder extends Seeder
             // Head Lamp
             [
                 "alkes_id" => 26,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "D16",
@@ -3952,6 +3977,7 @@ class InputCellSeeder extends Seeder
             // Heart Rate Monitor
             [
                 "alkes_id" => 27,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -4047,6 +4073,7 @@ class InputCellSeeder extends Seeder
             // Infant Warmer
             [
                 "alkes_id" => 28,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     'I2',
                     'K8',
@@ -4154,6 +4181,7 @@ class InputCellSeeder extends Seeder
             // Infusion Pump
             [
                 'alkes_id' => 29,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "C7",
@@ -4254,6 +4282,7 @@ class InputCellSeeder extends Seeder
             // Lab Incubator
             [
                 "alkes_id" => 30,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "D8",
@@ -4403,6 +4432,7 @@ class InputCellSeeder extends Seeder
             // Lab Refrigerator
             [
                 "alkes_id" => 31,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "C8",
@@ -4551,6 +4581,7 @@ class InputCellSeeder extends Seeder
             [
                 "alkes_id" => 32,
                 "version_name" => "Kalibrasi-",
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E9",
@@ -4659,6 +4690,7 @@ class InputCellSeeder extends Seeder
             [
                 "alkes_id" => 32,
                 "version_name" => "Pengujian-",
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "G9",
@@ -4759,6 +4791,7 @@ class InputCellSeeder extends Seeder
             // Lampu Operasi Ceiling Type
             [
                 "alkes_id" => 33,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "D16",
@@ -4827,6 +4860,7 @@ class InputCellSeeder extends Seeder
             // Lampu Operasi Mobile Type
             [
                 'alkes_id' => 34,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "D16",
@@ -4895,6 +4929,7 @@ class InputCellSeeder extends Seeder
             // Mesin Anaesthesi tanpa Vaporizer tanpa Ventilator
             [
                 "alkes_id" => 35,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -5012,6 +5047,7 @@ class InputCellSeeder extends Seeder
             // Mikropipet Fix
             [
                 'alkes_id' => 36,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E8",
@@ -5065,6 +5101,7 @@ class InputCellSeeder extends Seeder
             // Mikropipet Variabel
             [
                 "alkes_id" => 37,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E8",
@@ -5150,6 +5187,7 @@ class InputCellSeeder extends Seeder
             // Nebulizer
             [
                 'alkes_id' => 38,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E15",
@@ -5201,6 +5239,7 @@ class InputCellSeeder extends Seeder
             // O2 Concentrator
             [
                 'alkes_id' => 39,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -5540,6 +5579,7 @@ class InputCellSeeder extends Seeder
             // Phototherapi Unit
             [
                 'alkes_id' => 41,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E14",
@@ -5593,6 +5633,7 @@ class InputCellSeeder extends Seeder
             // Pulse Oximetri
             [
                 'alkes_id' => 42,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E15",
@@ -5733,6 +5774,7 @@ class InputCellSeeder extends Seeder
             // Short Wave Diametri
             [
                 "alkes_id" => 43,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E16",
@@ -5919,6 +5961,7 @@ class InputCellSeeder extends Seeder
             // Sphygmomanometer
             [
                 "alkes_id" => 44,
+                "code_version" => "10-01-24",
                 "input_cells" => [
                     "I2",
                     "C14",
@@ -6027,6 +6070,7 @@ class InputCellSeeder extends Seeder
             // Spirometer
             [
                 "alkes_id" => 45,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -6129,6 +6173,7 @@ class InputCellSeeder extends Seeder
             // Steriisator Kering
             [
                 "alkes_id" => 47,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "D8",
@@ -6273,6 +6318,7 @@ class InputCellSeeder extends Seeder
             // Suction Thorax
             [
                 "alkes_id" => 48,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "C7",
@@ -6534,6 +6580,7 @@ class InputCellSeeder extends Seeder
             // Themometer Klinik
             [
                 "alkes_id" => 50,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E11",
@@ -6626,6 +6673,7 @@ class InputCellSeeder extends Seeder
             // Timbangan Bayi
             [
                 "alkes_id" => 51,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "D7",
@@ -6763,6 +6811,7 @@ class InputCellSeeder extends Seeder
             // Traksi
             [
                 "alkes_id" => 52,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -6856,6 +6905,7 @@ class InputCellSeeder extends Seeder
             // Tredmill
             [
                 "alkes_id" => 53,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                    "I2",
                    "E7",
@@ -6964,6 +7014,7 @@ class InputCellSeeder extends Seeder
             // Tredmill With ECG
             [
                 "alkes_id" => 54,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -7138,6 +7189,7 @@ class InputCellSeeder extends Seeder
             // Ultrasound Theraphy
             [
                 "alkes_id" => 55,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "F7",
@@ -7248,6 +7300,7 @@ class InputCellSeeder extends Seeder
             // USG
             [
                 "alkes_id" => 56,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -7332,6 +7385,7 @@ class InputCellSeeder extends Seeder
             // Vacuum Extractor
             [
                 "alkes_id" => 59,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "C7",
@@ -7481,6 +7535,7 @@ class InputCellSeeder extends Seeder
             // Vaporizer
             [
                 "alkes_id" => 60,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -7562,6 +7617,7 @@ class InputCellSeeder extends Seeder
             // Wall Suction
             [
                 "alkes_id" => 62,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "C8",
@@ -7659,6 +7715,7 @@ class InputCellSeeder extends Seeder
             [
                 "alkes_id" => 66,
                 "version_name" => "Pengujian-",
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E9",
@@ -7760,6 +7817,7 @@ class InputCellSeeder extends Seeder
             [
                 "alkes_id" => 66,
                 "version_name" => "Kalibrasi-",
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E9",
@@ -7866,6 +7924,7 @@ class InputCellSeeder extends Seeder
             // Medical Freezer
             [
                 "alkes_id" => 67,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "C8",
@@ -8006,9 +8065,74 @@ class InputCellSeeder extends Seeder
                 ]
             ],
 
+            // Blood Solution Warmer
+            [
+                'alkes_id' => 69,
+                "code_version" => "17-01-24",
+                "version_name" => "Kalibrasi-",
+                "input_cells" => [
+                    "I2",
+                    "D7",
+                    "D15",
+                    "E15",
+                    "D16",
+                    "E16",
+                    "D17",
+                    "D20",
+                    "D21",
+                    "H25",
+                    "B26",
+                    "H26",
+                    "B27",
+                    "H27",
+                    "O25",
+                    "B33",
+                    "C33",
+                    "E33",
+                    "F33",
+                    "G33",
+                    "H33",
+                    "I33",
+                    "B39"
+                ],
+                "output_cells" => [
+                    "A2",
+                    "D7",
+                    "D15",
+                    "F15",
+                    "D16",
+                    "F16",
+                    "D17",
+                    "F17",
+                    "D20",
+                    "D21",
+                    "F25",
+                    "H25",
+                    "B26",
+                    "F26",
+                    "H26",
+                    "B27",
+                    "F27",
+                    "H27",
+                    "B31",
+                    "C31",
+                    "D31",
+                    "E31",
+                    "F31",
+                    "I31",
+                    "B35",
+                    "B36",
+                    "B37",
+                    "B38",
+                    "B39",
+                    "B47",
+                ],
+            ],
+
             // Bedside With Defibrillator
             [
                 'alkes_id' => 70,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "F14",
                     "G14",
@@ -8326,6 +8450,7 @@ class InputCellSeeder extends Seeder
             // DEFIBRILLATOR WITH ECG WITH SPO2
             [
                 "alkes_id" => 71,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "F14",
@@ -8589,6 +8714,7 @@ class InputCellSeeder extends Seeder
             // Suction Saliva
             [
                 "alkes_id" => 74,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "C7",
@@ -8746,6 +8872,7 @@ class InputCellSeeder extends Seeder
             // HFNC
             [
                 'alkes_id' => 76,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -8861,6 +8988,7 @@ class InputCellSeeder extends Seeder
             // Thermohygrometer Analog
             [
                 "alkes_id" => 77,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -9095,6 +9223,7 @@ class InputCellSeeder extends Seeder
             // Timbangan Dewasa
             [   
                 'alkes_id' => 78,
+                "code_version" => "10-01-24",
                 "input_cells" => [
                     "I2",
                     "D7",
@@ -9217,6 +9346,7 @@ class InputCellSeeder extends Seeder
             // Tachometer
             [
                 "alkes_id" => 80,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "C8",
@@ -9387,6 +9517,7 @@ class InputCellSeeder extends Seeder
             // Thermohygrometer Digital
             [
                 "alkes_id" => 79,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E7",
@@ -9621,6 +9752,7 @@ class InputCellSeeder extends Seeder
             // BPAP
             [
                 "alkes_id" => 82,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "F14",
@@ -9696,6 +9828,7 @@ class InputCellSeeder extends Seeder
             // Neopuff / Resusitasi Paru
             [
                 'alkes_id' => 83,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "F7",
@@ -9769,6 +9902,7 @@ class InputCellSeeder extends Seeder
             // Electrical Safety Analyzer
             [
                 'alkes_id' => 84,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "E15",
@@ -10862,6 +10996,7 @@ class InputCellSeeder extends Seeder
             // Otoscope
             [
                 "alkes_id" => 85,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "D16",
@@ -10923,6 +11058,7 @@ class InputCellSeeder extends Seeder
             // Laryngoscope
             [
                 "alkes_id" => 86,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "D16",
@@ -10984,6 +11120,7 @@ class InputCellSeeder extends Seeder
             // Photometer
             [
                 "alkes_id" => 88,
+                "code_version" => "01-10-23",
                 "input_cells" => [
                     "I2",
                     "C9",
@@ -11145,7 +11282,7 @@ class InputCellSeeder extends Seeder
             $alkes_id = $excel['alkes_id'];
             $excel_version = ExcelVersion::create([
                 'alkes_id' => $alkes_id,
-                'version_name' => ($excel['version_name'] ?? '') . '01-10-23'
+                'version_name' => ($excel['version_name'] ?? '') . ($excel['code_version'] ?? "01-10-23")
             ]);
 
             foreach ($excel['input_cells'] as $cell){
@@ -11160,28 +11297,6 @@ class InputCellSeeder extends Seeder
                     'cell' => $cell,
                     "excel_version_id" => $excel_version->id
                 ]);
-            }
-
-            // Timbangan Dewasa, Sphygmo, BPM
-            if(in_array($alkes_id, [44, 78, 9])){
-                $excel_version = ExcelVersion::create([
-                    'alkes_id' => $alkes_id,
-                    'version_name' => ($excel['version_name'] ?? '') . '10-01-24'
-                ]);
-        
-                foreach ($excel['input_cells'] as $cell){
-                    InputCell::create([
-                        'cell' => $cell,
-                        "excel_version_id" => $excel_version->id
-                    ]);
-                }
-        
-                foreach ($excel['output_cells'] as $cell){
-                    OutputCell::create([
-                        'cell' => $cell,
-                        "excel_version_id" => $excel_version->id
-                    ]);
-                }
             }
         }
     }
