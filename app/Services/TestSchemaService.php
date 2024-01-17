@@ -92,6 +92,8 @@ class TestSchemaService{
                         $expected_value = '';
                     }elseif($actual_value == "#NUM!"){
                         $expected_value = '';
+                    }elseif($actual_value == "#NAME?"){
+                        $expected_value = '';
                     }else{
                         $expected_value = $actual_value;
                     }
