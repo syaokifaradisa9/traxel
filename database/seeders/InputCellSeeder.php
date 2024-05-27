@@ -8065,9 +8065,9 @@ class InputCellSeeder extends Seeder
                 ]
             ],
 
-            // Blood Solution Warmer
+            // Blood Warmer
             [
-                'alkes_id' => 69,
+                'alkes_id' => 68,
                 "code_version" => "17-01-24",
                 "version_name" => "Kalibrasi-",
                 "input_cells" => [

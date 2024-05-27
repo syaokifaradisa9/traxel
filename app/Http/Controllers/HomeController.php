@@ -30,9 +30,9 @@ class HomeController extends Controller
     private $groupSimulationService;
     private $calibratorService;
     public function __construct(
-            AlkesService $alkesService, 
-            ExcelVersionService $excelVersionService, 
-            TestSchemaService $testSchemaService, 
+            AlkesService $alkesService,
+            ExcelVersionService $excelVersionService,
+            TestSchemaService $testSchemaService,
             ExcelService $excelService,
             GroupSimulationService $groupSimulationService,
             CalibratorService $calibratorService,
@@ -85,6 +85,14 @@ class HomeController extends Controller
     public function editCellNameExcelVersion($alkesId, $versionId, $type){
         $cells = $type == "input" ? InputCell::where('excel_version_id', $versionId)->get() : OutputCell::where('excel_version_id', $versionId)->get();
         return view('excel_version.cells', compact('alkesId', 'versionId', 'type', 'cells'));
+    }
+
+    public function deleteExcelVersion($alkesId, $versionId){
+        if($this->excelVersionService->delete($versionId)){
+            return to_route('version.index', ['alkes_id' => $alkesId])->with('success', "Sukses Menghapus Versi Excel");
+        }else{
+            return back()->withInput()->with('error', 'Terjadi Kesalahan, Silahkan Coba Lagi!');
+        }
     }
 
     public function updateCellNameExcelVersion(Request $request, $alkesId, $versionId, $type){
@@ -291,7 +299,7 @@ class HomeController extends Controller
                             ->orderBy("simulation_date", "ASC")
                             ->limit($request->num)
                             ->get();
-                            
+
         foreach($simulations as $simulation){
             $this->testSchemaService->testSimulation($versionId, $simulation->id);
         }
@@ -328,7 +336,7 @@ class HomeController extends Controller
     public function detailSimulation($alkesId, $versionId, $groupId, $schemaId){
         $input_cell_value = $this->testSchemaService->getInputCellValueBySchemaId($schemaId);
         $output_cell_value = $this->testSchemaService->getOutputCellValueBySchemaId($schemaId);
-        
+
         return view('schemas.detail', compact('alkesId', 'versionId', 'schemaId', 'input_cell_value', 'output_cell_value', 'groupId'));
     }
 

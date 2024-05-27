@@ -108,6 +108,10 @@
                                     <i class="fas fa-file-export mr-1"></i>
                                     Export
                                 </a>
+                                <a href="{{ route('version.delete', ['alkes_id' => $alkesId, 'version_id' => $value->id]) }}" class="btn btn-danger btn-danger w-100">
+                                    <i class="fas fa-trash mr-1"></i>
+                                    Hapus
+                                </a>
                             </td>
                         </tr>
                     @endforeach

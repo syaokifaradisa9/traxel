@@ -22,7 +22,8 @@
             $url = route('version.store', ['alkes_id' => $alkesId]);
         }
     @endphp
-    {{-- <form action="{{ $url }}" method="post" enctype="multipart/form-data">
+
+    <form action="{{ $url }}" method="post" enctype="multipart/form-data">
         @csrf
         @if(URLHelper::has('edit'))
             @method('PUT')
@@ -30,7 +31,7 @@
 
         <div class="card">
             <div class="card-header row">
-                <h4>Nama Skema Simulasi</h4>
+                <h4>Nama Versi</h4>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -61,11 +62,11 @@
                 </div>
                 <button class="btn btn-primary w-100" type="submit">
                     <i class="fas fa-save mr-1"></i>
-                    Simpan Simulasi
+                    Simpan Excel
                 </button>
             </div>
         </div>
-    </form> --}}
+    </form>
 
     <form action="{{ route('version.import', ['alkes_id' => $alkesId]) }}" method="post" enctype="multipart/form-data">
         @csrf

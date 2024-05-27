@@ -27,7 +27,37 @@ class ExcelVersionService{
     public function __construct(ExcelService $excelService){
         $this->excelService = $excelService;
     }
-    
+
+    public function delete($versionId){
+        DB::beginTransaction();
+        try{
+            InputCellValue::whereHas('input_cell', function($inputCell) use ($versionId){
+                $inputCell->where('excel_version_id', $versionId);
+            })->delete();
+            InputCell::where('excel_version_id', $versionId)->delete();
+
+            OutputCellValue::whereHas('output_cell', function($outputCell) use ($versionId){
+                $outputCell->where('excel_version_id', $versionId);
+            })->delete();
+            OutputCell::where('excel_version_id', $versionId)->delete();
+
+            TestSchema::whereHas('test_schema_group', function($group) use ($versionId){
+                $group->where('excel_version_id', $versionId);
+            })->delete();
+
+            TestSchemaGroup::where('excel_version_id', $versionId)->delete();
+
+            ExcelVersion::destroy($versionId);
+
+            DB::commit();
+            return true;
+        }catch(Exception $e){
+            DB::rollBack();
+            dd($e);
+            return false;
+        }
+    }
+
     private function getCellWithRedTextInSheet($file_path, $sheet_name){
         $spreadsheet = (new Xlsx())->load($file_path);
         $sheet = $spreadsheet->getSheetByName($sheet_name);
@@ -50,7 +80,7 @@ class ExcelVersionService{
         for ($row = 1; $row <= $highestRow; $row++) {
             for ($column = 1; $column <= $highestColumnIndex; $column++) {
                 $cell = Coordinate::stringFromColumnIndex($column) . $row;
-                
+
                 $cell_has_merged = false;
                 foreach($input_merged_cells as $merged_cell){
                     if($sheet->getCell($cell)->isInRange($merged_cell)){
@@ -85,7 +115,7 @@ class ExcelVersionService{
             $input_cell_values[] = [
                 "cell" => $input_cell,
                 "value" => $value,
-                
+
             ];
         }
 
@@ -122,11 +152,9 @@ class ExcelVersionService{
             $filePath = public_path("excel");
 
             $file->move($filePath, $fileName);
-    
+
             $cell_inputs = $this->getCellWithRedTextInSheet($filePath . "/" . $fileName, "ID");
             $cell_outputs = $this->getCellWithRedTextInSheet($filePath . "/" . $fileName, "LH");
-
-            dd($alkesId, implode('", "', $cell_inputs), implode('", "', $cell_outputs));
 
             $version = ExcelVersion::create([
                 'version_name' => $data['version_name'],
@@ -139,7 +167,7 @@ class ExcelVersionService{
                     'cell' => $cell_input
                 ]);
             }
-    
+
             foreach($cell_outputs as $outputCell){
                 OutputCell::create([
                     'excel_version_id' => $version->id,
@@ -193,7 +221,7 @@ class ExcelVersionService{
 
             $fileName = $alkes->excel_name . "-" . $data['version_name']. ".xlsx";
             $filePath = public_path("excel");
-        
+
             if(isset($data['file'])){
                 $file = $data['file'];
                 $file->move($filePath, $fileName);
@@ -227,7 +255,7 @@ class ExcelVersionService{
                     ])->delete();
                 }
             }
-    
+
             foreach($cell_outputs as $outputCell){
                 if(!in_array($outputCell, $previous_output_cells)){
                     OutputCell::create([
@@ -263,7 +291,7 @@ class ExcelVersionService{
                 if(str_contains($key, "name")){
                     $idcell = explode("-", $key)[1];
                     $newCell = $data[$idcell];
-                    
+
                     if($type == "input"){
                         $inputCell = InputCell::find($idcell);
 
@@ -299,7 +327,7 @@ class ExcelVersionService{
 
                 $test_schema->delete();
             }
-            
+
             InputCell::where("excel_version_id", $versionId)->delete();
             OutputCell::where("excel_version_id", $versionId)->delete();
 
@@ -317,7 +345,7 @@ class ExcelVersionService{
         $version      = ExcelVersion::with('group_calibrator')->find($versionId);
         $input_cells  = InputCell::select('cell', 'cell_name')->where('excel_version_id', $versionId)->get();
         $output_cells = OutputCell::select('cell', 'cell_name')->where('excel_version_id', $versionId)->get();
-        
+
         $group_test_schemas = [];
         $groupSchemes = TestSchemaGroup::where('excel_version_id', $versionId)->get();
         foreach ($groupSchemes as $groupScheme){
@@ -331,7 +359,7 @@ class ExcelVersionService{
 
                 $inputCellValues = [];
                 $input_cell_values = InputCellValue::with('input_cell')->where('test_schema_id', $test_schema->id)->get();
-                
+
                 foreach($input_cell_values as $cell_value){
                     $inputCellValues[] = [
                         "cell" => $cell_value->input_cell->cell,
@@ -343,7 +371,7 @@ class ExcelVersionService{
 
                 $outputCellValues = [];
                 $output_cell_value = OutputCellValue::with('output_cell')->where('test_schema_id', $test_schema->id)->get();
-                
+
                 foreach($output_cell_value as $cell_value){
                     $outputCellValues[] = [
                         "cell" => $cell_value->output_cell->cell,
@@ -386,11 +414,11 @@ class ExcelVersionService{
         $version_json['cell_input'] = $input_cells;
         $version_json['cell_output'] = $output_cells;
         $version_json['schema_group'] = $group_test_schemas;
-        
+
         $alkes = Alkes::find($alkesId);
-        
+
         $jsonData = json_encode($version_json);
-        
+
         // Simpan JSON dalam file temporary
         $jsonFilename = $alkes->name . " Versi " . $version->version_name . '.json';
         $jsonTempFile = tempnam(sys_get_temp_dir(), 'json_export');
@@ -463,7 +491,7 @@ class ExcelVersionService{
                 'alkes_id' => $alkes_id,
                 'version_name' => $version_name
             ]);
-    
+
             // Menyimpan Cell Input
             $cell_inputs = $data['cell_input'];
             foreach($cell_inputs as $cell_input){
@@ -473,7 +501,7 @@ class ExcelVersionService{
                     'excel_version_id' => $excel_version->id
                 ]);
             }
-         
+
             // Menyimpan Cell Output
             $cell_outputs = $data['cell_output'];
             foreach($cell_outputs as $cell_output){
@@ -482,7 +510,7 @@ class ExcelVersionService{
                     'excel_version_id' => $excel_version->id
                 ]);
             }
-    
+
             foreach($data['calibrator'] as $groupCalibrator){
                 $group_calibrator = GroupCalibrator::create([
                     'name' => $groupCalibrator['name'],
@@ -520,7 +548,7 @@ class ExcelVersionService{
                         $cell_id = InputCell::where('excel_version_id', $excel_version->id)
                                             ->where('cell', $input_cell['cell'])
                                             ->first()->id;
-        
+
                         InputCellValue::create([
                             'input_cell_id' => $cell_id,
                             'value' => $input_cell['value'],
@@ -532,7 +560,7 @@ class ExcelVersionService{
                         $cell_id = OutputCell::where('excel_version_id', $excel_version->id)
                                             ->where('cell', $input_cell['cell'])
                                             ->first()->id;
-                        
+
                         OutputCellValue::create([
                             'output_cell_id' => $cell_id,
                             'expected_value' => $input_cell['value'] ?? '',
