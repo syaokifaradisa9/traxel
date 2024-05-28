@@ -14,7 +14,7 @@
     @elseif(Session::has('error'))
         <div class="alert alert-danger mb-2">{{ Session::get('error') }}</div>
     @endif
-    
+
     <div class="card">
         <div class="card-body">
            <form action="{{ route('version.calibrator-group.import', ['alkes_id' => $alkesId, 'version_id' => $versionId]) }}" method="post" enctype="multipart/form-data">
@@ -23,7 +23,14 @@
                 <div class="form-group">
                     <label for=""><b>File Json Kalibrator</b></label>
                     <input name="calibrator_file" type="file" class="form-control">
+                    <p class="mt-0 text-danger">
+                        * File Json dapat didownload
+                        <a href="https://drive.google.com/drive/folders/11eJDzRD32TRjQP1S6NskOXnKbrZmFg2C?usp=drive_link" target="_blank">
+                            <b>Disini</b>
+                        </a>. Jika tidak ada, Mohon input manual dan jika selesai input manual mohon export dan upload ke link agar data dapat di gunakan lagi.
+                    </p>
                 </div>
+
                 <button class="btn btn-primary w-100" type="submit">
                     Import
                 </button>
@@ -34,11 +41,11 @@
     <div class="card">
         <div class="card-body">
            <form action="{{ isset($calibrator_group) ? route('version.calibrator-group.update', [
-                'alkes_id' => $alkesId, 
-                'version_id' => $versionId, 
+                'alkes_id' => $alkesId,
+                'version_id' => $versionId,
                 'group_id' => $calibrator_group->id
             ]) : route('version.calibrator-group.store', [
-                'alkes_id' => $alkesId, 
+                'alkes_id' => $alkesId,
                 'version_id' => $versionId
             ]) }}" method="post">
                 @csrf
