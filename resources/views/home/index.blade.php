@@ -1,6 +1,6 @@
 @extends('app', [
-    'section_title' => "Halaman Manajemen Daftar Excel",
-    'section_lead' => "Manajemen Data Daftar Excel",
+    'section_title' => "Halaman Manajemen Daftar Alkes",
+    'section_lead' => "Manajemen Data Daftar Alkes",
     'section_headers' => [
         ["menu" => "Home", "is_active" => true, 'href' => route('home')],
     ]
@@ -10,12 +10,12 @@
     <div class="card">
         <div class="card-header row">
             <div class="col">
-                <h4>Tabel Excel</h4>
+                <h4>Tabel Alkes</h4>
             </div>
             <div class="col text-right">
                 <a href="{{ route('excel.create') }}" class="btn btn-primary">
                     <i class="fas fa-plus mr-1"></i>
-                    Tambah Excel
+                    Tambah Alkes
                 </a>
             </div>
         </div>
