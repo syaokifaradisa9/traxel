@@ -24,16 +24,16 @@ class GroupSimulationService{
             $allCombinations[] = $currentCombination;
             return;
         }
-    
+
         $currentCalibrator = array_shift($group_calibrator);
-        
+
         foreach ($currentCalibrator as $calibrator) {
             $newCombination = $currentCombination;
             $newCombination[] = $calibrator;
             $this->generateCombinations($group_calibrator, $newCombination, $allCombinations);
         }
     }
-    
+
     public function store($data, $versionId){
         DB::beginTransaction();
         try{
@@ -53,15 +53,15 @@ class GroupSimulationService{
                 if(!in_array($group_calibrator->cell_ID, $id_cell_calibrator)){
                     $id_cell_calibrator[] = $group_calibrator->cell_ID;
                 }
-                
+
                 if(!in_array($group_calibrator->cell_LH, $lh_cell_calibrator) && $group_calibrator->cell_LH){
                     $lh_cell_calibrator[] = $group_calibrator->cell_LH;
                 }
-                
+
                 foreach($group_calibrator->calibrator->pluck('full_name')->toArray() as $calibrator){
                     $calibrators[] = [
-                        "ID" => $group_calibrator->cell_ID,
-                        "LH" => $group_calibrator->cell_LH,
+                        "ID" => strtoupper($group_calibrator->cell_ID),
+                        "LH" => strtoupper($group_calibrator->cell_LH),
                         'calibrator' => $calibrator
                     ];
                 }
@@ -116,7 +116,7 @@ class GroupSimulationService{
                         $allCombinations[] = $combination;
                     }
                 }
-                
+
             }
 
             // Memasukkan Data Simulasi Per Kombinasi Kalibrator
@@ -133,7 +133,7 @@ class GroupSimulationService{
                     'test_schema_group_id' => $testSchemaGroup->id,
                     "name" => $simulation_name,
                 ]);
-        
+
                 // Memasukkan Nilai Input dan Output Per Simulasi
                 foreach($data as $key => $value){
                     if(str_contains($key, "input")){
@@ -157,13 +157,13 @@ class GroupSimulationService{
                     }
 
                     $cell_id_id = InputCell::where('cell', $calibrator['ID'])->where('excel_version_id', $versionId)->first()->id;
-                    
+
                     InputCellValue::create([
                         'input_cell_id' => $cell_id_id,
                         'value' => $calibrator['calibrator'],
                         'test_schema_id' => $testSchema->id,
                     ]);
-                    
+
                     if($calibrator['LH']){
                         if(!OutputCell::where('cell', $calibrator['LH'])->where('excel_version_id', $versionId)->exists()){
                             OutputCell::create([
@@ -212,11 +212,11 @@ class GroupSimulationService{
             InputCellValue::whereHas("test_schema", function($testSchema) use ($groupId){
                 $testSchema->where("test_schema_group_id", $groupId);
             })->delete();
-    
+
             OutputCellValue::whereHas("test_schema", function($testSchema) use ($groupId){
                 $testSchema->where("test_schema_group_id", $groupId);
             })->delete();
-    
+
             TestSchema::whereTestSchemaGroupId($groupId)->delete();
             TestSchemaGroup::find($groupId)->delete();
 
