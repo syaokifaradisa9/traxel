@@ -52,6 +52,19 @@ class HomeController extends Controller
         return view('home.index', compact('alkes'));
     }
 
+    public function excelCreate(){
+        return view('excel.create');
+    }
+
+    public function excelStore(Request $request){
+        Alkes::create([
+            'name' => $request->name,
+            'excel_name' => str_replace(" ", "_", $request->excel_name),
+        ]);
+
+        return redirect(route('home'))->with('success', 'Berhasil Menambahkan Excel!');
+    }
+
     public function excelVersion($alkesId){
         $versions = $this->excelVersionService->getVersionByAlkesId($alkesId);
         $excel_name = Alkes::find($alkesId)->excel_name;

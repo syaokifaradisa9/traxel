@@ -8,8 +8,16 @@
 
 @section('content')
     <div class="card">
-        <div class="card-header">
-            <h4>Tabel Excel</h4>
+        <div class="card-header row">
+            <div class="col">
+                <h4>Tabel Excel</h4>
+            </div>
+            <div class="col text-right">
+                <a href="{{ route('excel.create') }}" class="btn btn-primary">
+                    <i class="fas fa-plus mr-1"></i>
+                    Tambah Excel
+                </a>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -45,16 +53,13 @@
                                 <a href="{{ route('version.index', ['alkes_id' => $value->id]) }}" class="btn btn-primary">
                                     <i class="fas fa-search mr-1"></i>
                                     Detail
-                                </a>                               
+                                </a>
                             </td>
                         </tr>
                     @endforeach
                     </tbody>
                 </table>
             </div>
-            <p>
-                {{ $excels }}
-            </p>
         </div>
     </div>
 @endsection

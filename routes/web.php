@@ -32,6 +32,11 @@ Route::middleware('auth')->group(function(){
     Route::controller(HomeController::class)->group(function(){
         Route::prefix('home')->group(function(){
             Route::get('/', 'index')->name('home');
+            Route::prefix("excel")->name('excel.')->group(function(){
+                Route::get('create', 'excelCreate')->name('create');
+                Route::post('store', 'excelStore')->name('store');
+            });
+
             Route::prefix('{alkes_id}/version')->name('version.')->group(function(){
                 Route::get('/', 'excelVersion')->name('index');
                 Route::get('create', 'createExcelVersion')->name('create');
@@ -101,7 +106,7 @@ Route::middleware('auth')->group(function(){
 
     Route::get("report", function(){
         $calibrators = Calibrator::all();
-        
+
         $alkesCalibrator = [];
         foreach ($calibrators as $calibrator){
             $excelVersion = $calibrator->group_calibrator->excel_version;
@@ -124,7 +129,7 @@ Route::middleware('auth')->group(function(){
         }
 
         ksort($alkesCalibrators);
-        
+
         $pdf = Pdf::loadView('calibrator_report', [
             "calibrators" => $alkesCalibrators
         ])->setPaper('a4', 'landscape');

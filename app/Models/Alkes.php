@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Alkes extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'name',
+        'excel_name'
+    ];
     public function version(){
         return $this->hasMany(ExcelVersion::class);
     }
