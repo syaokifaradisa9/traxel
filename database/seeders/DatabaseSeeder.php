@@ -17,9 +17,9 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('lpfkbjb123')
         ]);
 
-        $this->call([
-            AlkesSeeder::class,
-            InputCellSeeder::class
-        ]);
+        // $this->call([
+        //     AlkesSeeder::class,
+        //     InputCellSeeder::class
+        // ]);
     }
 }
