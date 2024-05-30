@@ -59,7 +59,7 @@ class HomeController extends Controller
     public function excelStore(Request $request){
         Alkes::create([
             'name' => $request->name,
-            'excel_name' => str_replace(" ", "_", $request->excel_name),
+            'excel_name' => str_replace(" ", "_", $request->name),
         ]);
 
         return redirect(route('home'))->with('success', 'Berhasil Menambahkan Excel!');
