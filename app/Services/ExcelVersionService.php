@@ -31,6 +31,12 @@ class ExcelVersionService{
     public function delete($versionId){
         DB::beginTransaction();
         try{
+            Calibrator::whereHas('group_calibrator', function($group_calibrator) use ($versionId){
+                $group_calibrator->where('excel_version_id', $versionId);
+            })->delete();
+
+            GroupCalibrator::where('excel_version_id', $versionId)->delete();
+
             InputCellValue::whereHas('input_cell', function($inputCell) use ($versionId){
                 $inputCell->where('excel_version_id', $versionId);
             })->delete();
